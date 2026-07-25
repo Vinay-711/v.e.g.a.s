@@ -342,10 +342,19 @@ class Planner:
             (Intent.GIT, ("git", "commit", "branch", "status", "diff", "push", "pull")),
             (Intent.RESEARCH, ("research", "search", "find out", "look up", "latest")),
             (Intent.BROWSER, ("browser", "website", "web page", "form", "click", "open site")),
-            (Intent.DEVICE, ("phone", "device", "sms", "call", "bluetooth", "pair")),
+            (Intent.DEVICE, (
+                "phone", "device", "sms", "call", "bluetooth", "pair",
+                "whatsapp", "watsapp", "telegram", "instagram",
+                "send a message", "send message", "open app",
+                "open whatsapp", "open watsapp", "open youtube",
+                "open spotify", "open chrome", "open maps",
+                "open camera", "open instagram", "open telegram",
+                "play song", "play video",
+            )),
             (Intent.WORKFLOW, ("calendar", "email", "briefing", "schedule", "meeting")),
             (Intent.MEMORY, ("remember", "recall", "what do you know", "forget")),
-            (Intent.SYSTEM, ("system", "cpu", "memory", "volume", "play music", "open app")),
+            (Intent.SYSTEM, ("system", "cpu", "memory", "volume", "play music", "screenshot",
+                             "battery", "brightness", "wifi", "launch", "quit app")),
         )
         for intent, keywords in keyword_map:
             if any(keyword in text for keyword in keywords):
@@ -816,14 +825,14 @@ class Planner:
         if intent == Intent.DEVICE:
             return [
                 {
-                    "description": "Discover available connected devices.",
+                    "description": f"Execute the device action: {goal}",
                     "agent_role": "device",
-                    "acceptance_criteria": ["Target device availability is known."],
+                    "acceptance_criteria": ["Device command was sent and result was captured."],
                 },
                 {
-                    "description": f"Coordinate the requested device action: {goal}",
-                    "agent_role": "device",
-                    "acceptance_criteria": ["Device command result or approval requirement is captured."],
+                    "description": "Record the device action outcome in memory.",
+                    "agent_role": "memory",
+                    "acceptance_criteria": ["Execution context is persisted for future sessions."],
                 },
                 {
                     "description": "Report device task outcome.",

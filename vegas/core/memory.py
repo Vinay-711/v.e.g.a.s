@@ -58,9 +58,17 @@ class MemoryEngine:
 
     def save(self):
         """Saves in-memory cache state to disk."""
+        def _safe_default(obj):
+            """Fallback encoder for objects that aren't JSON-serializable."""
+            if hasattr(obj, "serialize"):
+                return obj.serialize()
+            if hasattr(obj, "__dict__"):
+                return obj.__dict__
+            return str(obj)
+
         try:
             with open(self.db_path, "w", encoding="utf-8") as f:
-                json.dump(self.data, f, indent=2)
+                json.dump(self.data, f, indent=2, default=_safe_default)
         except Exception as e:
             print(f"MemoryEngine Error: Failed to write JSON database: {e}", flush=True)
 

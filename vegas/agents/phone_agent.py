@@ -61,40 +61,44 @@ class PhoneAgent(BaseAgent):
         device_id = ctx.get("device_id")
 
         try:
-            if "telemetry" in lowered or "battery" in lowered or "wifi" in lowered:
+            if "telemetry" in lowered or ("battery" in lowered and "status" in lowered):
                 output = self.tools["get_companion_telemetry"]()
             elif "camera" in lowered or "snapshot" in lowered or "camera stream" in lowered:
                 output = self.tools["capture_companion_camera_frame"]()
-            elif "mic" in lowered or "voice" in lowered or "forward voice" in lowered:
+            elif "mic" in lowered or "forward voice" in lowered:
                 text = ctx.get("text")
                 output = self.tools["forward_phone_voice"](text=text)
             elif "clipboard" in lowered:
                 text = ctx.get("text")
                 output = self.tools["sync_phone_clipboard"](text=text)
-            elif "transfer" in lowered or "file" in lowered:
+            elif "transfer" in lowered or ("file" in lowered and "send" not in lowered):
                 path = ctx.get("file_path", "data.bin")
                 direction = ctx.get("direction", "download")
                 output = self.tools["transfer_phone_file"](file_path=path, direction=direction)
-            elif "memory" in lowered:
+            elif "shared memory" in lowered or "sync memory" in lowered:
                 key = ctx.get("key", "status")
                 val = ctx.get("value")
                 output = self.tools["sync_phone_shared_memory"](key=key, value=val)
-            elif "sms" in lowered or "text" in lowered:
+            elif "sms" in lowered:
                 number = ctx.get("number", "1234567890")
                 text = ctx.get("text", task)
                 output = self.tools["send_companion_sms"](number=number, text=text)
-            elif "call" in lowered or "dial" in lowered:
+            elif ("call" in lowered or "dial" in lowered) and "install" not in lowered:
                 number = ctx.get("number", "1234567890")
                 output = self.tools["make_companion_call"](number=number)
             elif "pair" in lowered or "wireless" in lowered:
                 ip = ctx.get("ip_address", "192.168.1.100")
                 port = int(ctx.get("port", 5555))
                 output = self.tools["pair_wireless_device"](ip_address=ip, port=port)
-            elif "list" in lowered or "devices" in lowered:
+            elif "list" in lowered and "device" in lowered:
                 output = self.tools["list_connected_devices"]()
             else:
-                action = ctx.get("action", "home")
-                output = self.tools["execute_phone_command"](action=action, device_id=device_id)
+                # Smart natural-language parsing for app/messaging actions
+                app_name = self._extract_app_name(lowered)
+                action, target, text_param = self._parse_device_action(lowered, app_name, ctx)
+                output = self.tools["execute_phone_command"](
+                    action=action, target=target, text=text_param, device_id=device_id
+                )
 
             duration = (time.time() - start_time) * 1000
             status = "failed" if "error" in output.lower() or "failed" in output.lower() else "success"
@@ -115,3 +119,65 @@ class PhoneAgent(BaseAgent):
                 result=f"PhoneAgent execution error: {str(e)}",
                 duration_ms=(time.time() - start_time) * 1000,
             )
+
+    def _extract_app_name(self, text: str) -> str | None:
+        """Extract app name from natural language task description."""
+        import re
+        known_apps = [
+            "whatsapp", "watsapp", "youtube", "spotify", "chrome",
+            "maps", "google maps", "camera", "settings", "calculator",
+            "clock", "gmail", "photos", "instagram", "telegram",
+        ]
+        for app in known_apps:
+            if app in text:
+                # Normalize common misspellings
+                return "whatsapp" if app == "watsapp" else app
+        # Try pattern: "open <app>"
+        match = re.search(r"(?:open|launch|start)\s+(?:the\s+)?(\w+)", text)
+        if match:
+            return match.group(1)
+        return None
+
+    def _parse_device_action(self, text: str, app_name: str | None, ctx: dict) -> tuple[str, str | None, str | None]:
+        """Parse natural language into (action, target, text) tuple for execute_phone_command."""
+        import re
+
+        # Opening an app
+        if app_name and any(kw in text for kw in ("open", "launch", "start", "go to")):
+            return "open_app", app_name, None
+
+        # Typing/sending a message in an app (the app should already be open)
+        if any(kw in text for kw in ("type", "send", "message", "write", "input")):
+            # Extract the message content
+            msg_match = re.search(r"(?:saying|message|text|type|write|send)\s+['\"]?(.+?)['\"]?\s*$", text)
+            message_text = msg_match.group(1).strip("'\" ") if msg_match else ctx.get("text", "hi")
+            if app_name:
+                return "open_app", app_name, message_text
+            return "open_app", "whatsapp", message_text
+
+        # Tapping / pressing send button
+        if "tap" in text or "press" in text or "send button" in text:
+            return "open_app", app_name or "whatsapp", None
+
+        # Search for a contact
+        if "search" in text or "contact" in text or "find" in text:
+            target = ctx.get("contact") or ctx.get("target")
+            return "open_app", app_name or "whatsapp", target
+
+        # Screenshot
+        if "screenshot" in text:
+            return "take_screenshot", None, None
+
+        # Battery
+        if "battery" in text:
+            return "battery_status", None, None
+
+        # Media control
+        if any(kw in text for kw in ("play", "pause", "next", "prev", "volume")):
+            return "media_control", "play_pause", None
+
+        # Default: open the app if we know one, otherwise home
+        if app_name:
+            return "open_app", app_name, None
+        return "home", None, None
+
