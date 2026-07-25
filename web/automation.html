@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AetherOS - Automation Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#cbb5ff",
+                        "primary-fixed-dim": "#4cd6ff",
+                        "surface": "#131313",
+                        "on-secondary-container": "#00716a",
+                        "surface-container-low": "#1c1b1b",
+                        "on-primary-fixed": "#001f28",
+                        "on-tertiary-container": "#6000dd",
+                        "on-primary": "#003543",
+                        "outline": "#859399",
+                        "on-secondary-fixed": "#00201d",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container": "#201f1f",
+                        "primary-container": "#00d1ff",
+                        "surface-container-highest": "#353534",
+                        "tertiary-fixed-dim": "#d1bcff",
+                        "outline-variant": "#3c494e",
+                        "on-secondary-fixed-variant": "#00504b",
+                        "on-primary-container": "#00566a",
+                        "surface-dim": "#131313",
+                        "tertiary": "#e4d6ff",
+                        "on-tertiary-fixed-variant": "#5700c9",
+                        "on-error": "#690005",
+                        "surface-bright": "#3a3939",
+                        "on-surface-variant": "#bbc9cf",
+                        "inverse-on-surface": "#313030",
+                        "on-tertiary": "#3c0090",
+                        "on-error-container": "#ffdad6",
+                        "surface-tint": "#4cd6ff",
+                        "secondary-fixed": "#00fdee",
+                        "on-secondary": "#003733",
+                        "tertiary-fixed": "#e9ddff",
+                        "on-background": "#e5e2e1",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-variant": "#353534",
+                        "on-tertiary-fixed": "#23005b",
+                        "inverse-primary": "#00677f",
+                        "error-container": "#93000a",
+                        "secondary-container": "#00fdee",
+                        "on-primary-fixed-variant": "#004e60",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary": "#a4e6ff",
+                        "primary-fixed": "#b7eaff",
+                        "error": "#ffb4ab",
+                        "secondary-fixed-dim": "#00ded1",
+                        "secondary": "#ffffff",
+                        "background": "#131313",
+                        "on-surface": "#e5e2e1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "gutter": "24px",
+                        "container-padding": "32px",
+                        "stack-sm": "8px",
+                        "stack-lg": "32px",
+                        "glass-padding": "20px",
+                        "stack-md": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Geist"],
+                        "label-md": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Geist"],
+                        "headline-lg": ["Geist"],
+                        "display-lg": ["Geist"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "label-md": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-md": ["14px", { "lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "0.04em", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "1.6", "letterSpacing": "0em", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #0e0e0e; /* surface-container-lowest */
+            color: #e5e2e1; /* on-surface */
+            overflow-x: hidden;
+        }
+        
+        .glass-panel {
+            background: rgba(3, 3, 3, 0.4);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-panel-hover:hover {
+            transform: scale(1.02);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .neon-border {
+            border: 1px solid rgba(76, 214, 255, 0.3); /* primary-fixed-dim */
+            box-shadow: inset 0 0 10px rgba(76, 214, 255, 0.1);
+        }
+        
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 180, 171, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 180, 171, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 180, 171, 0); }
+        }
+        
+        /* Ambient Background */
+        .ambient-bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 209, 255, 0.03) 0%, rgba(14, 14, 14, 1) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Custom Scrollbar for horizontal lists */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md h-screen flex flex-col md:flex-row">
+<div class="ambient-bg"></div>
+<!-- TopNavBar (Mobile: visible, Desktop: visible) -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-container-padding h-16 bg-surface/30 dark:bg-surface-dim/30 backdrop-blur-3xl border-b border-white/10 shadow-2xl">
+<div class="flex items-center gap-gutter">
+<h1 class="font-display-lg text-headline-sm font-bold tracking-tight text-primary">AetherOS</h1>
+<!-- Navigation Links -->
+<nav class="hidden md:flex items-center gap-stack-md">
+<a class="text-on-surface-variant font-body-md hover:text-primary transition-colors duration-200" href="#">Models</a>
+<a class="text-on-surface-variant font-body-md hover:text-primary transition-colors duration-200" href="#">Runtime</a>
+<a class="text-on-surface-variant font-body-md hover:text-primary transition-colors duration-200" href="#">Logs</a>
+</nav>
+</div>
+<div class="flex items-center gap-stack-md">
+<!-- Trailing Actions -->
+<button class="hidden md:flex items-center justify-center px-4 py-2 rounded bg-primary-container/10 border border-primary-container text-primary font-label-md hover:bg-primary-container/20 transition-colors">
+                Execute
+            </button>
+<button class="hidden md:flex items-center justify-center px-4 py-2 rounded border border-white/10 text-on-surface hover:bg-white/5 transition-colors font-label-md">
+                Voice
+            </button>
+<div class="flex items-center gap-2 border-l border-white/10 pl-stack-md">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined">settings_input_component</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+<img alt="User System Profile" class="w-8 h-8 rounded-full border border-white/20 object-cover ml-2" data-alt="A futuristic, glowing AI avatar profile picture. The image features a sleek, abstract geometric sphere composed of luminous blue and cyan energy lines against a pitch-black background. The style is highly technical, resembling a holographic projection from a sci-fi operating system, conveying themes of advanced artificial intelligence and high-tech identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD21t4BGnOtdnNa7m8D0QMumxQX_dKoeYAboG8SjJ4OQRk0itowUebOE82cM6Ll20MI8iJvIu3k1pqz9QIDKcjx_CNILakdVw9FsJMXGPDa0XTQe730fgsmjkta90o7cELkEhEffCu6rTzPGv6wZZH4Bk1ztVrUC0gSASAWdJLehyLNyWPm0Y5z6pnk9I-mY7qmZwkxEaV07FDD9N16kBqfajePTle1oXoKWsy5beOaUeccHCwpPbGHAQ"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar (Desktop only) -->
+
+<aside class="fixed left-0 top-16 bottom-0 flex flex-col py-stack-md bg-surface-container/10 dark:bg-surface-container-lowest/10 backdrop-blur-2xl border-r border-white/5 shadow-[64px_0_64px_-20px_rgba(0,0,0,0.4)] h-full w-64 z-40 hidden md:flex">
+    <!-- Header -->
+    <div class="px-container-padding mb-8 flex flex-col items-center justify-center pt-4">
+        <div class="w-16 h-16 rounded-full glass-card flex items-center justify-center mb-4 relative">
+            <div class="absolute inset-2 rounded-full bg-gradient-to-tr from-primary to-secondary-fixed opacity-50 blur-sm animate-pulse"></div>
+            <span class="material-symbols-outlined text-primary relative z-10" style="font-size: 32px;">graphic_eq</span>
+        </div>
+        <h2 class="font-display-lg text-headline-sm text-primary">Aether Core</h2>
+        <span class="text-label-md font-label-md text-secondary-fixed-dim mt-1">V4.2 Active</span>
+    </div>
+    <!-- Tabs -->
+    
+<div class="flex-1 overflow-y-auto px-4 flex flex-col gap-1">
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5" href="/index.html">
+        <span class="material-symbols-outlined">dashboard</span>
+        Dashboard
+    </a>
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5" href="/agents.html">
+        <span class="material-symbols-outlined">smart_toy</span>
+        Agents
+    </a>
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5" href="/memory.html">
+        <span class="material-symbols-outlined">memory</span>
+        Memory
+    </a>
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5" href="/control.html">
+        <span class="material-symbols-outlined">settings_remote</span>
+        Control
+    </a>
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5" href="/browser.html">
+        <span class="material-symbols-outlined">language</span>
+        Browser
+    </a>
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5" href="/files.html">
+        <span class="material-symbols-outlined">folder_open</span>
+        Files
+    </a>
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5" href="/terminal.html">
+        <span class="material-symbols-outlined">terminal</span>
+        Terminal
+    </a>
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-secondary-fixed bg-white/5 border-l-2 border-secondary-fixed-dim pl-4" href="/automation.html">
+        <span class="material-symbols-outlined">bolt</span>
+        Automation
+    </a>
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5" href="/settings.html">
+        <span class="material-symbols-outlined">settings</span>
+        Settings
+    </a>
+</div>
+
+    <!-- Footer / CTA -->
+    <div class="px-4 mt-auto pt-4 border-t border-white/5 pb-20">
+        <button class="w-full py-2 mb-4 rounded-lg border border-white/10 text-on-surface hover:bg-white/5 transition-colors font-body-md flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+            New Thread
+        </button>
+        <div class="flex justify-between px-2 text-label-md font-label-md text-on-surface-variant">
+            <div class="flex items-center gap-1">
+                <span class="material-symbols-outlined" style="font-size: 14px;">sensors</span>
+                Status
+            </div>
+            <div class="flex items-center gap-1">
+                <span class="material-symbols-outlined" style="font-size: 14px;">timer</span>
+                Uptime
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- Main Workspace -->
+<main class="flex-1 mt-16 md:ml-64 p-container-padding overflow-y-auto z-10 relative">
+<div class="max-w-[1600px] mx-auto flex flex-col gap-gutter">
+<!-- Top Section: Live Monitor Preview -->
+<section class="glass-panel rounded-xl p-1 relative overflow-hidden neon-border h-[400px] flex flex-col">
+<div class="absolute top-4 left-4 z-20 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+<div class="w-2 h-2 rounded-full bg-error pulse-dot"></div>
+<span class="font-label-md text-label-md text-white tracking-widest uppercase">Live Telemetry</span>
+</div>
+<!-- Simulated Desktop Background -->
+<div class="flex-1 relative rounded-lg overflow-hidden" data-alt="A highly detailed, ultra-wide desktop wallpaper suitable for a futuristic AI operating system. The image depicts a sprawling, abstract wireframe landscape made of glowing cyan and deep blue neon lines over an infinite pitch-black abyss. The style is sleek, cinematic, and deeply technical, resembling high-end spatial computing interface backdrops. Subtle particle effects drift through the scene." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCzUABY5DdDq4-NeJtHpnYFgTrbdWRaErhkjfXBOdMOgpTisywQa4rLMgxBSgJzjoCUvv20kPXEVsdEisNCmKhxMgC0JqVg0gEVyXWaM2Timepx_mT7qYwo0Xl5C6VDObdrxbfF6fiJa40EbeCHkZvpIJEB-poSsliYwaEXnweUWO5OqZRcfqydKPZaiQvpgLutlsc16E-k0fG3oEbAoovBQ9B6crdVAGn4GctuBZy_t7o60H-qJr0cwA')">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-80"></div>
+<!-- Overlays -->
+<div class="absolute top-4 right-4 bg-black/50 backdrop-blur-md border border-primary-fixed-dim/30 rounded p-3 font-label-md text-label-md text-primary-fixed-dim min-w-[120px]">
+<div class="text-on-surface-variant mb-1 text-[10px]">MOUSE POS</div>
+<div class="flex justify-between"><span>X:</span> <span class="font-mono" id="mouse-x">1402</span></div>
+<div class="flex justify-between"><span>Y:</span> <span class="font-mono" id="mouse-y">0845</span></div>
+</div>
+<div class="absolute bottom-4 left-4 right-4 bg-black/70 backdrop-blur-xl border border-white/10 rounded-lg p-4 h-32 flex flex-col font-label-md text-label-md">
+<div class="text-on-surface-variant mb-2 text-[10px] tracking-widest border-b border-white/10 pb-1">KEYBOARD ACTIVITY LOG</div>
+<div class="flex-1 overflow-hidden flex flex-col-reverse text-primary-fixed-dim/80 space-y-reverse space-y-1">
+<div>&gt; Executing macro sequence Alpha-9</div>
+<div>&gt; [Ctrl] + [Shift] + [P]</div>
+<div>&gt; "Compile automation script" [Enter]</div>
+<div class="opacity-50">&gt; Process initialized...</div>
+<div class="opacity-30">&gt; Waiting for user input...</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Middle Section: Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- System State Panel -->
+<section class="glass-panel rounded-xl p-glass-padding glass-panel-hover flex flex-col gap-4">
+<h2 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-xl">memory</span>
+                        System State
+                    </h2>
+<div class="space-y-4 flex-1">
+<div>
+<div class="text-[10px] text-on-surface-variant tracking-widest mb-1 font-label-md">CURRENT WINDOW</div>
+<div class="bg-white/5 border border-white/10 rounded px-3 py-2 font-body-md text-on-surface truncate">
+                                VS Code - aether_core_v4.py
+                            </div>
+</div>
+<div>
+<div class="text-[10px] text-on-surface-variant tracking-widest mb-1 font-label-md">OPEN APPLICATIONS (3)</div>
+<div class="flex gap-2">
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center border border-white/20"><span class="material-symbols-outlined text-sm">terminal</span></div>
+<div class="w-8 h-8 rounded bg-primary-container/20 border border-primary/50 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-sm">code</span></div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center border border-white/20"><span class="material-symbols-outlined text-sm">language</span></div>
+</div>
+</div>
+<div>
+<div class="text-[10px] text-on-surface-variant tracking-widest mb-1 font-label-md">CLIPBOARD BUFFER</div>
+<div class="bg-black/50 border border-white/10 rounded p-2 font-label-md text-label-md text-on-surface-variant h-16 overflow-hidden relative">
+<span class="opacity-70">def initialize_neural_link():<br/>    await connection.establish(port=8080)</span>
+<div class="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-black/80 to-transparent"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Screenshot History (Spans 2 columns) -->
+<section class="glass-panel rounded-xl p-glass-padding lg:col-span-2 flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<h2 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-xl">history</span>
+                            Capture History
+                        </h2>
+<button class="text-[10px] text-primary-fixed-dim font-label-md tracking-widest hover:text-primary">VIEW ALL</button>
+</div>
+<div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+<!-- History Items -->
+<div class="min-w-[200px] flex flex-col gap-2 group cursor-pointer">
+<div class="h-28 rounded-lg border border-white/10 overflow-hidden relative group-hover:border-primary-fixed-dim/50 transition-colors">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A small, stylized thumbnail image showing a dark-mode code editor interface filled with neon syntax highlighting. The code snippets glow in cyan, pink, and bright green against a deep charcoal background. The image represents a captured frame of a developer's workspace within a high-tech operating system." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCj2v8mnaE4ClIHbf9WmUoaKiqza8dMAkeSwVjCy5b5KaUS4zJM33FO5Rk6y3BxnwsFyutUbr5IzQGgGLeBlNvmY68b-TYJvSCoJTFeial0uxdXrUtIKEMIjPOB19Xvqc2ozIdidHBUpa6sRsbQiWPOmVThBUUm0G7cXcxcTYv6_WTU0M3xnz-zB8SblUbmgIweYEh9xvn81jI5KVH-ITRKSrg-LfCOli1nsPycWwTyxfzvMJkv2BVB7A')"></div>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+</div>
+<div class="font-label-md text-[10px] text-secondary-fixed-dim tracking-wider">14:02:45.122</div>
+</div>
+<div class="min-w-[200px] flex flex-col gap-2 group cursor-pointer">
+<div class="h-28 rounded-lg border border-white/10 overflow-hidden relative group-hover:border-primary-fixed-dim/50 transition-colors">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A thumbnail image of a futuristic data visualization dashboard. The scene features glowing wireframe graphs, 3D scatter plots, and flowing streams of binary data in electric blue and bright teal. The background is a stark, infinite black void. It represents a system telemetry capture in a modern, dark-mode UI." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBXgvfWvRc-yB0jGZtcEmi5ifk52oVdYaKnScjVxMVyl3GN_ZE9nAGB7b1U_wEiapEKLdpxOD0cNRBkAfSYuviWWkSASdgw8s1yIfYTs5FrBnwvHN5YZHnyPjehnsbupEkbJKHEFJtzHE-0PN4qGDOhI6idXvn4H3u4ZE0RteVjA4i0LPKllsK5iX8RvXJ1k5z8SFeVNPNxTFGN8uaq2S0tV4ehBDXGfPWGcfy_p93pGxPmZKyxxPv7Ig')"></div>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+</div>
+<div class="font-label-md text-[10px] text-secondary-fixed-dim tracking-wider">14:01:12.005</div>
+</div>
+<div class="min-w-[200px] flex flex-col gap-2 group cursor-pointer">
+<div class="h-28 rounded-lg border border-white/10 overflow-hidden relative group-hover:border-primary-fixed-dim/50 transition-colors">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A sleek thumbnail of a web browser interface in dark mode, showing a complex network topology map. Nodes and connections glow intensely in white and cyan over a very dark gray background. The aesthetic is highly technical, clean, and typical of an advanced cyber-security or IT operations center display." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuARMqJ_frTXC7cqCfWPAJBKEjLId_1Tw7m541penpfWBzbMEdnQA0PEnGRE5P1ey1-QLM7MJViKUs046LRkZJ_xE8DZkQSNE3eHNJ8SP8cOpIsNxaMwYH-GxZjcMxBxI3HDAtQjCYkOXU5GO5utddqUSdYzbxZanQgrmy5kquFYZMU8yUNbpKEp2PcX1280gJULSV5YwZSqZyLoUM--pNzHAPntZzNIy1uOQv8fKKpYvsqwyQ1KiCWv8A')"></div>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+</div>
+<div class="font-label-md text-[10px] text-on-surface-variant tracking-wider">13:45:00.992</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Automation Engine Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+<!-- Macro Builder -->
+<section class="glass-panel rounded-xl p-glass-padding h-[300px] flex flex-col">
+<div class="flex justify-between items-center mb-4">
+<h2 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-xl">account_tree</span>
+                            Macro Logic Flow
+                        </h2>
+<div class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] font-label-md text-on-surface-variant">Editing: Sequence_Alpha</div>
+</div>
+<div class="flex-1 border border-white/5 bg-black/30 rounded-lg p-4 relative overflow-hidden flex items-center justify-center">
+<!-- Abstract Visual Flow Representation -->
+<div class="flex items-center gap-4">
+<div class="w-16 h-12 rounded border border-primary/50 bg-primary/10 flex items-center justify-center text-primary shadow-[0_0_15px_rgba(76,214,255,0.2)]">
+<span class="material-symbols-outlined text-sm">play_arrow</span>
+</div>
+<div class="w-8 border-t-2 border-dashed border-white/20"></div>
+<div class="w-24 h-12 rounded border border-white/20 bg-white/5 flex items-center justify-center text-on-surface font-label-md text-[10px]">
+                                Find UI Element
+                            </div>
+<div class="w-8 border-t-2 border-dashed border-white/20"></div>
+<div class="w-24 h-12 rounded border border-white/20 bg-white/5 flex items-center justify-center text-on-surface font-label-md text-[10px]">
+                                Click(x,y)
+                            </div>
+<div class="w-8 border-t-2 border-dashed border-white/20"></div>
+<div class="w-12 h-12 rounded-full border border-secondary-fixed/50 bg-secondary-fixed/10 flex items-center justify-center text-secondary-fixed shadow-[0_0_15px_rgba(0,253,238,0.2)]">
+<span class="material-symbols-outlined text-sm">done</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Automation Recorder -->
+<section class="glass-panel rounded-xl p-glass-padding h-[300px] flex flex-col items-center justify-center relative neon-border">
+<div class="absolute top-4 left-4 font-label-md text-[10px] text-on-surface-variant tracking-widest">AUTOMATION RECORDER</div>
+<div class="w-32 h-32 rounded-full border-2 border-error/50 bg-error/10 flex items-center justify-center cursor-pointer hover:bg-error/20 transition-all shadow-[0_0_40px_rgba(255,180,171,0.2)] group relative">
+<div class="w-12 h-12 rounded-full bg-error pulse-dot group-hover:scale-110 transition-transform"></div>
+<!-- Decorative orbital rings -->
+<div class="absolute inset-[-10px] rounded-full border border-error/20 border-dashed animate-[spin_10s_linear_infinite]"></div>
+<div class="absolute inset-[-20px] rounded-full border border-white/5 animate-[spin_15s_linear_infinite_reverse]"></div>
+</div>
+<div class="mt-8 font-headline-sm text-headline-sm text-error text-center">Standby</div>
+<div class="font-label-md text-[10px] text-on-surface-variant mt-2 text-center">Click to begin recording spatial interactions</div>
+</section>
+</div>
+<!-- Bottom Spacing for Dock -->
+<div class="h-24"></div>
+</div>
+</main>
+<!-- Bottom Section: Quick Launchpad (Dock) -->
+<div class="fixed bottom-6 left-0 w-full flex justify-center z-50 pointer-events-none">
+<div class="bg-surface-container-highest/60 backdrop-blur-3xl border border-white/10 rounded-2xl px-4 py-3 flex items-center gap-3 shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto">
+<button class="w-12 h-12 rounded-xl flex items-center justify-center hover:bg-white/10 hover:scale-110 transition-all duration-300 relative group">
+<span class="material-symbols-outlined text-2xl text-on-surface">language</span>
+<span class="absolute -top-8 bg-black/80 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity font-label-md">Browser</span>
+</button>
+<button class="w-12 h-12 rounded-xl flex items-center justify-center bg-white/5 border border-white/10 hover:bg-white/10 hover:scale-110 transition-all duration-300 relative group">
+<span class="material-symbols-outlined text-2xl text-primary">code</span>
+<div class="absolute -bottom-1 w-1 h-1 rounded-full bg-primary"></div>
+<span class="absolute -top-8 bg-black/80 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity font-label-md">VS Code</span>
+</button>
+<button class="w-12 h-12 rounded-xl flex items-center justify-center hover:bg-white/10 hover:scale-110 transition-all duration-300 relative group">
+<span class="material-symbols-outlined text-2xl text-on-surface">terminal</span>
+<span class="absolute -top-8 bg-black/80 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity font-label-md">Terminal</span>
+</button>
+<button class="w-12 h-12 rounded-xl flex items-center justify-center hover:bg-white/10 hover:scale-110 transition-all duration-300 relative group">
+<span class="material-symbols-outlined text-2xl text-on-surface">folder</span>
+<span class="absolute -top-8 bg-black/80 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity font-label-md">Finder</span>
+</button>
+<div class="w-px h-8 bg-white/20 mx-2"></div>
+<button class="w-10 h-10 rounded-lg flex items-center justify-center hover:bg-error/20 hover:text-error transition-all duration-300 text-on-surface-variant relative group">
+<span class="material-symbols-outlined text-xl">power_settings_new</span>
+<span class="absolute -top-8 bg-black/80 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity font-label-md">Shutdown</span>
+</button>
+<button class="w-10 h-10 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all duration-300 text-on-surface-variant relative group">
+<span class="material-symbols-outlined text-xl">lock</span>
+<span class="absolute -top-8 bg-black/80 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity font-label-md">Lock</span>
+</button>
+</div>
+</div>
+<script>
+        // Simple JS for telemetry simulation
+        setInterval(() => {
+            const x = Math.floor(Math.random() * 1920);
+            const y = Math.floor(Math.random() * 1080);
+            document.getElementById('mouse-x').innerText = x.toString().padStart(4, '0');
+            document.getElementById('mouse-y').innerText = y.toString().padStart(4, '0');
+        }, 1500);
+    </script>
+<script>
+// Global VEGAS OS Integration Script
+const API_URL = 'http://127.0.0.1:8001';
+
+let daemonStatusSocket = null;
+let daemonStatusReconnectTimer = null;
+let daemonStatusReconnectAttempts = 0;
+let daemonStatusDisposed = false;
+
+function renderDaemonStatus(daemon, planner) {
+    if (!daemon) return;
+
+    let badge = document.getElementById('vegas-daemon-status');
+    if (!badge) {
+        badge = document.createElement('div');
+        badge.id = 'vegas-daemon-status';
+        badge.setAttribute('aria-live', 'polite');
+        badge.style.cssText = [
+            'position:fixed', 'right:16px', 'bottom:16px', 'z-index:100001',
+            'display:flex', 'align-items:center', 'gap:8px', 'padding:8px 12px',
+            'border-radius:999px', 'font:600 10px/1.2 ui-monospace,SFMono-Regular,monospace',
+            'letter-spacing:.08em', 'background:rgba(7,12,18,.88)',
+            'border:1px solid rgba(255,255,255,.14)', 'color:#dcecff',
+            'backdrop-filter:blur(12px)'
+        ].join(';');
+        document.body.appendChild(badge);
+    }
+
+    const state = String(daemon.state || 'offline').toUpperCase();
+    const wakeWord = String((daemon.wake_word || {}).state || 'unknown').toUpperCase();
+    const voice = String((daemon.voice || {}).state || 'unknown').toUpperCase();
+    const plannerState = String(((planner || {}).active || {}).status || 'idle').toUpperCase();
+    const healthy = state === 'RUNNING' && !daemon.stale;
+    badge.textContent = `● VEGAS DAEMON ${state} · WAKE ${wakeWord} · VOICE ${voice} · PLAN ${plannerState}`;
+    badge.style.borderColor = healthy ? 'rgba(16,185,129,.55)' : 'rgba(245,158,11,.55)';
+    badge.style.color = healthy ? '#b7f7d7' : '#fde6b0';
+}
+
+function connectDaemonStatusSocket() {
+    if (daemonStatusDisposed || !window.WebSocket) return;
+    const wsUrl = `${API_URL.replace(/^http/, 'ws')}/api/daemon/status/ws`;
+    daemonStatusSocket = new WebSocket(wsUrl);
+
+    daemonStatusSocket.onmessage = event => {
+        try {
+            const message = JSON.parse(event.data);
+            if (message.type === 'daemon_status') {
+                renderDaemonStatus(message.payload);
+                daemonStatusReconnectAttempts = 0;
+            }
+        } catch (_) {
+            // The regular REST telemetry poll remains a safe fallback.
+        }
+    };
+
+    daemonStatusSocket.onerror = () => daemonStatusSocket.close();
+    daemonStatusSocket.onclose = () => {
+        if (daemonStatusDisposed) return;
+        const delay = Math.min(30000, 1000 * (2 ** daemonStatusReconnectAttempts));
+        daemonStatusReconnectAttempts += 1;
+        daemonStatusReconnectTimer = window.setTimeout(connectDaemonStatusSocket, delay);
+    };
+}
+
+window.addEventListener('beforeunload', () => {
+    daemonStatusDisposed = true;
+    if (daemonStatusReconnectTimer) window.clearTimeout(daemonStatusReconnectTimer);
+    if (daemonStatusSocket) daemonStatusSocket.close();
+});
+
+connectDaemonStatusSocket();
+
+// Update Telemetry/Status info across all pages
+async function updateTelemetry() {
+    try {
+        const res = await fetch(`${API_URL}/api/system-status`);
+        const data = await res.json();
+        renderDaemonStatus(data.daemon, data.planner);
+        
+        // Update CPU percent
+        const cpuElements = document.querySelectorAll('.font-headline-sm.text-secondary-fixed');
+        cpuElements.forEach(el => {
+            if (el.textContent.includes('%') || el.previousElementSibling?.textContent === 'CPU') {
+                el.textContent = `${data.cpu_percent}%`;
+                const bar = el.nextElementSibling?.firstElementChild;
+                if (bar) bar.style.width = `${data.cpu_percent}%`;
+            }
+        });
+        
+        // Update Memory info
+        const memElements = document.querySelectorAll('.font-headline-sm.text-primary');
+        memElements.forEach(el => {
+            if (el.textContent.includes('GB') || el.previousElementSibling?.textContent === 'MEM') {
+                el.textContent = `${data.mem_used_gb}G / ${data.mem_total_gb}G`;
+                const bar = el.nextElementSibling?.firstElementChild;
+                if (bar) bar.style.width = `${data.mem_percent}%`;
+            }
+        });
+
+        // Update active tools count
+        const toolBadge = document.querySelector('.tool-count-badge');
+        if (toolBadge) toolBadge.textContent = `${data.tool_count} Active`;
+
+    } catch (e) {
+        console.error("Telemetry fetch failed:", e);
+    }
+}
+
+// Poll telemetry every 3 seconds
+setInterval(updateTelemetry, 3000);
+updateTelemetry();
+
+// ═══════════════════════════════════════════════════════════════════
+// UNIVERSAL SEARCH MODAL (Triggered by Search inputs on all pages)
+// ═══════════════════════════════════════════════════════════════════
+function showModal(title, text) {
+    let overlay = document.getElementById('vegas-overlay-modal');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'vegas-overlay-modal';
+        overlay.className = 'overlay-container';
+        overlay.setAttribute('style', 'position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 100000; padding: 24px;');
+        document.body.appendChild(overlay);
+    }
+    overlay.innerHTML = `
+        <div class="modal-card" style="background: rgba(10,10,12,0.95); border: 1px solid rgba(0, 209, 255, 0.25); border-radius: 16px; padding: 24px; max-width: 600px; width: 100%; box-shadow: 0 0 50px rgba(0, 209, 255, 0.15); display: flex; flex-direction: column; gap: 16px; font-family: monospace;">
+            <div class="modal-header-row" style="display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px;">
+                <div class="modal-icon-shield" style="font-size: 24px; color: #00d1ff;">
+                    <span class="material-symbols-outlined animate-spin">sync</span>
+                </div>
+                <div class="modal-title-wrap" style="flex: 1;">
+                    <h3 class="modal-title font-headline-sm" style="color: #ffffff; margin: 0; font-size: 14px;">${title}</h3>
+                    <span style="color: rgba(255,255,255,0.4); font-size: 9px; text-transform: uppercase;">VEGAS Core Subsystem Query</span>
+                </div>
+            </div>
+            <div class="modal-body-text" style="color: rgba(255,255,255,0.85); font-size: 11px; line-height: 1.6; max-height: 350px; overflow-y: auto; white-space: pre-wrap; padding: 8px 0;">
+                ${text}
+            </div>
+            <div class="modal-btn-row" style="display: flex; justify-content: flex-end; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+                <button class="modal-btn cancel" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #ffffff; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 11px;" onclick="document.getElementById('vegas-overlay-modal').remove()">CLOSE</button>
+            </div>
+        </div>
+    `;
+}
+
+window.updateModal = function(title, text) {
+    const overlay = document.getElementById('vegas-overlay-modal');
+    if (!overlay) return;
+    const titleEl = overlay.querySelector('.modal-title');
+    const bodyEl = overlay.querySelector('.modal-body-text');
+    const iconEl = overlay.querySelector('.modal-icon-shield');
+    if (titleEl) titleEl.textContent = title;
+    if (bodyEl) bodyEl.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    if (iconEl) {
+        iconEl.innerHTML = '<span class="material-symbols-outlined text-emerald-400">done</span>';
+    }
+}
+
+// Bind universal search inputs
+document.querySelectorAll('input').forEach(input => {
+    if (input.placeholder.includes('Command AetherOS')) return;
+    
+    input.addEventListener('keydown', async (e) => {
+        if (e.key === 'Enter') {
+            const query = input.value.trim();
+            if (!query) return;
+            input.value = '';
+            
+            showModal("Querying VEGAS Core...", `Processing query: "${query}"...`);
+            try {
+                const res = await fetch(`${API_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: query })
+                });
+                const data = await res.json();
+                updateModal("Response Received", data.response || data.error);
+            } catch (err) {
+                updateModal("Connection Failed", "Could not reach VEGAS core daemon on port 8001.");
+            }
+        }
+    });
+});
+
+// Bind top header "EXECUTE" button
+const executeBtn = document.querySelector('button.primary-btn-glow:not(.p-3)');
+if (executeBtn) {
+    executeBtn.addEventListener('click', () => {
+        const activeInput = document.querySelector('input:focus') || document.querySelector('input');
+        if (activeInput) {
+            const event = new KeyboardEvent('keydown', { key: 'Enter' });
+            activeInput.dispatchEvent(event);
+        }
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CHAT FUNCTIONALITY (For Dashboard / Terminal Pages)
+// ═══════════════════════════════════════════════════════════════════
+const commandInput = document.querySelector('input[placeholder*="Command AetherOS"]');
+const sendButton = document.querySelector('.p-3.primary-btn-glow, button.p-3.primary-btn-glow');
+
+if (commandInput) {
+    const chatContainer = document.querySelector('main div.flex-1.overflow-y-auto.p-container-padding');
+    let isFirstMessage = true;
+
+    async function sendChat() {
+        const text = commandInput.value.trim();
+        if (!text) return;
+        commandInput.value = '';
+
+        if (isFirstMessage && chatContainer) {
+            chatContainer.innerHTML = '';
+            isFirstMessage = false;
+        }
+
+        // 1. Append User Message
+        if (chatContainer) {
+            const userMsg = document.createElement('div');
+            userMsg.className = 'flex justify-end';
+            userMsg.innerHTML = `
+                <div class="glass-card user-message rounded-2xl rounded-tr-sm p-4 max-w-2xl text-on-surface font-body-lg text-body-lg">
+                    ${text}
+                </div>
+            `;
+            chatContainer.appendChild(userMsg);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // 2. Append Thinking Indicator
+        const thinkingIndicator = document.createElement('div');
+        thinkingIndicator.className = 'flex justify-start thinking-indicator';
+        thinkingIndicator.innerHTML = `
+            <div class="glass-card ai-message rounded-2xl rounded-tl-sm p-4 max-w-3xl flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary animate-spin">sync</span>
+                <span class="font-label-md text-label-md text-primary uppercase tracking-widest">Executing Command...</span>
+            </div>
+        `;
+        if (chatContainer) {
+            chatContainer.appendChild(thinkingIndicator);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        try {
+            const res = await fetch(`${API_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+            const data = await res.json();
+            
+            thinkingIndicator.remove();
+
+            // 3. Append AI Response
+            if (chatContainer) {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'flex justify-start';
+                aiMsg.innerHTML = `
+                    <div class="glass-card ai-message rounded-2xl rounded-tl-sm p-glass-padding max-w-3xl">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="material-symbols-outlined text-primary" style="font-size: 18px;">memory</span>
+                            <span class="font-label-md text-label-md text-primary uppercase tracking-widest">Aether Core Response</span>
+                        </div>
+                        <p class="text-on-surface font-body-lg text-body-lg mb-4 leading-relaxed whitespace-pre-wrap">${data.response || data.error}</p>
+                    </div>
+                `;
+                chatContainer.appendChild(aiMsg);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+        } catch (e) {
+            thinkingIndicator.remove();
+            if (chatContainer) {
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'flex justify-start';
+                errorMsg.innerHTML = `
+                    <div class="glass-card ai-message rounded-2xl rounded-tl-sm p-glass-padding max-w-3xl border-error">
+                        <p class="text-error font-body-lg text-body-lg leading-relaxed">Error connecting to VEGAS Core backend.</p>
+                    </div>
+                `;
+                chatContainer.appendChild(errorMsg);
+            }
+        }
+    }
+
+    if (sendButton) sendButton.addEventListener('click', sendChat);
+    commandInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') sendChat();
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// AGENTS / NODES RENDERING (For Agents Page)
+// ═══════════════════════════════════════════════════════════════════
+const agentsGrid = document.querySelector('.grid.grid-cols-1.lg\\:grid-cols-2.xl\\:grid-cols-3');
+if (agentsGrid && window.location.pathname.includes('agents.html')) {
+    async function loadAgents() {
+        try {
+            const res = await fetch(`${API_URL}/api/tools`);
+            const data = await res.json();
+            if (!data.tools) return;
+            agentsGrid.innerHTML = '';
+            data.tools.forEach((tool, idx) => {
+                const card = document.createElement('div');
+                card.className = 'glass-panel rounded-xl p-glass-padding spatial-card relative overflow-hidden group cursor-pointer border border-white/5';
+                card.innerHTML = `
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-transparent opacity-50"></div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded bg-primary/20 flex items-center justify-center border border-primary/30 text-lg">
+                                ${tool.icon || '🤖'}
+                            </div>
+                            <div>
+                                <h3 class="font-headline-sm text-headline-sm text-sm text-on-surface">${tool.name}</h3>
+                                <span class="font-label-md text-label-md text-on-surface-variant font-mono uppercase text-[9px]">${tool.category}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 bg-secondary-fixed/10 px-2 py-1 rounded border border-secondary-fixed/20">
+                            <div class="w-1.5 h-1.5 rounded-full bg-secondary-fixed pulse-dot"></div>
+                            <span class="font-label-md text-[10px] text-secondary-fixed uppercase tracking-wider">Online</span>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 h-10 text-xs">${tool.description}</p>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-white/10">
+                        <button class="px-3 py-1.5 rounded bg-white/5 hover:bg-primary/20 text-on-surface hover:text-primary transition-colors text-[10px] font-label-md flex items-center gap-1 border border-white/10" onclick="triggerAgentCall('${tool.name}')">
+                            <span class="material-symbols-outlined text-[14px]">bolt</span>
+                            Execute Node
+                        </button>
+                    </div>
+                `;
+                agentsGrid.appendChild(card);
+            });
+        } catch (e) {
+            console.error("Agents load failed:", e);
+        }
+    }
+    loadAgents();
+}
+
+window.triggerAgentCall = function(toolName) {
+    showModal("Executing Node Command...", `Invoking tool node: ${toolName}...`);
+    fetch(`${API_URL}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: `Use the ${toolName} tool` })
+    })
+    .then(r => r.json())
+    .then(data => {
+        updateModal("Execution Complete", data.response || data.error);
+    })
+    .catch(() => {
+        updateModal("Error", "Execution node offline.");
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MEMORY INTERACTIVE ACTIONS (For Memory Page)
+// ═══════════════════════════════════════════════════════════════════
+const memFactInput = document.getElementById('mem-fact');
+const memQueryInput = document.getElementById('mem-query');
+const memoryResultDiv = document.querySelector('.display-body');
+
+// Bind actions on memory page
+document.addEventListener('click', async (e) => {
+    if (e.target && e.target.classList.contains('memory-save-trigger')) {
+        const fact = memFactInput?.value.trim();
+        if (!fact) return;
+        memFactInput.value = '';
+        if (memoryResultDiv) memoryResultDiv.textContent = 'Committing memory...';
+        
+        try {
+            const res = await fetch(`${API_URL}/api/memory/remember`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fact: fact })
+            });
+            const data = await res.json();
+            if (memoryResultDiv) memoryResultDiv.textContent = data.result;
+            loadTimeline();
+        } catch (err) {
+            if (memoryResultDiv) memoryResultDiv.textContent = 'Error saving memory.';
+        }
+    }
+
+    if (e.target && e.target.textContent === 'Query Memory') {
+        const query = memQueryInput?.value.trim();
+        if (!query) return;
+        if (memoryResultDiv) memoryResultDiv.textContent = 'Recalling memory...';
+        
+        try {
+            const res = await fetch(`${API_URL}/api/memory/recall`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: query })
+            });
+            const data = await res.json();
+            if (memoryResultDiv) memoryResultDiv.textContent = data.result;
+        } catch (err) {
+            if (memoryResultDiv) memoryResultDiv.textContent = 'Error recalling memory.';
+        }
+    }
+});
+
+// Load recent memory index cards at the bottom
+async function loadTimeline() {
+    const timelineContainer = document.querySelector('.timeline-scroll');
+    if (!timelineContainer) return;
+    try {
+        const res = await fetch(`${API_URL}/api/memory/recall`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: '' })
+        });
+        const data = await res.json();
+        const lines = data.result ? data.result.split('\n') : [];
+        
+        if (lines.length > 0 && !lines[0].startsWith('No matches')) {
+            timelineContainer.innerHTML = '';
+            lines.forEach((line, idx) => {
+                const parts = line.match(/^\[(.*?)\] (.*)$/);
+                const kind = parts ? parts[1] : 'Memory';
+                const text = parts ? parts[2] : line;
+                
+                const card = document.createElement('div');
+                card.className = 'min-w-[240px] h-full bg-black/40 rounded-lg border border-white/5 p-3 flex flex-col justify-between hover:border-primary/50 transition-colors cursor-pointer';
+                card.innerHTML = `
+                    <div class="font-label-md text-label-md text-primary text-[10px] uppercase">${kind}</div>
+                    <div class="font-body-md text-body-md text-sm text-on-surface truncate">${text}</div>
+                `;
+                card.addEventListener('click', () => {
+                    const entityDiv = document.querySelector('.space-y-4 > div:nth-child(1) > .font-body-md');
+                    const previewDiv = document.querySelector('.space-y-4 > div:nth-child(3) > .font-body-md');
+                    if (entityDiv) entityDiv.textContent = kind;
+                    if (previewDiv) previewDiv.textContent = text;
+                });
+                timelineContainer.appendChild(card);
+            });
+        }
+    } catch (e) {
+        console.error("Timeline load failed:", e);
+    }
+}
+if (document.querySelector('.timeline-scroll')) {
+    loadTimeline();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// AUTOMATION REVIEW / PENDING TASKS (For Automation Page)
+// ═══════════════════════════════════════════════════════════════════
+const macroFlowSection = document.querySelector('section.glass-panel.rounded-xl.p-glass-padding.glass-panel-hover');
+if (macroFlowSection && window.location.pathname.includes('automation.html')) {
+    macroFlowSection.innerHTML = `
+        <h2 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-xl">shield</span>
+            Safety Review Gate
+        </h2>
+        <div class="space-y-3 flex-1 overflow-y-auto pr-1" id="pending-actions-list">
+            <span class="text-on-surface-variant text-xs">Loading safety check pool...</span>
+        </div>
+    `;
+    
+    async function loadPendingActions() {
+        const listDiv = document.getElementById('pending-actions-list');
+        try {
+            const res = await fetch(`${API_URL}/api/memory/pending`);
+            const data = await res.json();
+            if (!data.result || data.result === 'No pending tasks.') {
+                listDiv.innerHTML = '<span class="text-on-surface-variant text-xs">No tasks currently require safety approval.</span>';
+                return;
+            }
+            listDiv.innerHTML = '';
+            const lines = data.result.split('\n');
+            lines.forEach(line => {
+                const parts = line.match(/^(\d+)\. (.*?) \(id: (.*?)\)$/);
+                if (!parts) return;
+                const index = parts[1];
+                const desc = parts[2];
+                const taskId = parts[3];
+                
+                const item = document.createElement('div');
+                item.className = 'p-3 bg-black/40 border border-white/5 rounded-lg flex flex-col gap-2';
+                item.innerHTML = `
+                    <div class="text-[10px] text-amber-500 uppercase tracking-widest font-bold">Action ${index} Awaiting Release</div>
+                    <div class="text-xs text-on-surface font-mono">${desc}</div>
+                    <div class="flex gap-2 justify-end mt-1">
+                        <button class="px-2 py-1 rounded bg-error/15 border border-error/30 text-error text-[10px] font-bold" onclick="cancelPending('${taskId}')">DISCARD</button>
+                        <button class="px-2 py-1 rounded bg-primary/15 border border-primary/30 text-primary text-[10px] font-bold" onclick="confirmPending('${taskId}')">APPROVE</button>
+                    </div>
+                `;
+                listDiv.appendChild(item);
+            });
+        } catch (err) {
+            listDiv.innerHTML = '<span class="text-error text-xs">Could not fetch safety queue.</span>';
+        }
+    }
+    
+    window.confirmPending = async function(taskId) {
+        showModal("Executing Released Action...", `Confirming release of task ID: ${taskId}...`);
+        try {
+            const res = await fetch(`${API_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `confirm_task ${taskId}` })
+            });
+            const data = await res.json();
+            updateModal("Action Executed Successfully", data.response);
+            loadPendingActions();
+        } catch (err) {
+            updateModal("Failure", "Could not complete safety release.");
+        }
+    }
+    
+    window.cancelPending = async function(taskId) {
+        showModal("Cancelling Action...", `Cancelling task ID: ${taskId}...`);
+        try {
+            const res = await fetch(`${API_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `cancel_task ${taskId}` })
+            });
+            const data = await res.json();
+            updateModal("Action Cancelled", data.response);
+            loadPendingActions();
+        } catch (err) {
+            updateModal("Failure", "Could not cancel task.");
+        }
+    }
+    
+    loadPendingActions();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SETTINGS RENDERING (For Settings Page)
+// ═══════════════════════════════════════════════════════════════════
+const settingsForm = document.querySelector('section.glass-panel.rounded-xl.p-glass-padding.flex.flex-col');
+if (settingsForm && window.location.pathname.includes('settings.html')) {
+    async function loadSettingsMeta() {
+        try {
+            const res = await fetch(`${API_URL}/api/system-status`);
+            const data = await res.json();
+            
+            const metaDiv = document.createElement('div');
+            metaDiv.className = 'mt-6 p-4 bg-black/40 border border-white/5 rounded-lg flex flex-col gap-2 font-mono text-xs';
+            metaDiv.innerHTML = `
+                <div class="text-[10px] text-primary uppercase tracking-widest font-bold mb-2">Daemon Config Status</div>
+                <div class="flex justify-between border-b border-white/5 py-1"><span>ACTIVE MODEL</span><span class="text-on-surface">${data.model}</span></div>
+                <div class="flex justify-between border-b border-white/5 py-1"><span>DAEMON PORT</span><span class="text-on-surface">8001</span></div>
+                <div class="flex justify-between border-b border-white/5 py-1"><span>OS ARCHITECTURE</span><span class="text-on-surface">${data.os}</span></div>
+                <div class="flex justify-between border-b border-white/5 py-1"><span>PYTHON BINARY</span><span class="text-on-surface">${data.python}</span></div>
+                <div class="flex justify-between py-1"><span>CPU CORES</span><span class="text-on-surface">${data.cpu_cores} Cores</span></div>
+            `;
+            settingsForm.appendChild(metaDiv);
+        } catch (e) {
+            console.error("Settings load failed:", e);
+        }
+    }
+    loadSettingsMeta();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FILE EXPLORER RENDERING (For Files Page)
+// ═══════════════════════════════════════════════════════════════════
+const filesListContainer = document.querySelector('.files-list-container');
+const editorContentArea = document.querySelector('.editor-content-area');
+
+if (filesListContainer) {
+    async function loadFiles() {
+        filesListContainer.innerHTML = '<span class="text-on-surface-variant text-sm">Loading workspace files...</span>';
+        try {
+            const res = await fetch(`${API_URL}/api/files/list`);
+            const data = await res.json();
+            if (data.error) {
+                filesListContainer.innerHTML = `<span class="text-error">${data.error}</span>`;
+                return;
+            }
+            filesListContainer.innerHTML = '';
+            data.files.forEach(file => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between p-2 rounded bg-white/5 border border-white/5 hover:bg-white/10 transition-colors cursor-pointer';
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary">${file.is_dir ? 'folder' : 'description'}</span>
+                        <span class="font-body-md text-body-md text-on-surface">${file.name}</span>
+                    </div>
+                `;
+                item.addEventListener('click', async () => {
+                    if (file.is_dir) {
+                        return;
+                    }
+                    if (editorContentArea) editorContentArea.textContent = 'Loading file contents...';
+                    try {
+                        const fileRes = await fetch(`${API_URL}/api/files/view?path=${encodeURIComponent(file.path)}`);
+                        const fileData = await fileRes.json();
+                        if (editorContentArea) editorContentArea.textContent = fileData.content || fileData.error || 'Empty file.';
+                    } catch {
+                        if (editorContentArea) editorContentArea.textContent = 'Error loading file content.';
+                    }
+                });
+                filesListContainer.appendChild(item);
+            });
+        } catch {
+            filesListContainer.innerHTML = '<span class="text-error">Error loading directory structure.</span>';
+        }
+    }
+    loadFiles();
+}
+
+</script></body></html>

@@ -1,0 +1,45 @@
+[project]
+name = "vegas-assistant"
+version = "0.1.0"
+description = "A Python project for Vegas Assistant featuring FastMCP and LiveKit integration."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "mcp[cli]",
+    "python-dotenv",
+    "requests",
+    "google-api-python-client",
+    "google-auth-oauthlib",
+    "playwright",
+    "fastapi>=0.139.0",
+    "uvicorn>=0.50.2",
+    "websockets>=16.0",
+    "google-genai>=2.10.0",
+    "psutil>=7.2.2",
+    "pvporcupine>=3.0.5",
+    "sounddevice>=0.5.1",
+    "faster-whisper>=1.2.0",
+    "google-antigravity",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "httpx>=0.27.0",
+]
+
+[project.scripts]
+vegas = "server:main"
+vegas_api = "api:main"
+vegas_auto = "vegas.autonomous:main"
+vegas_daemon = "vegas.daemon.__main__:main"
+
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["vegas"]
+py-modules = ["server.py", "api.py"]

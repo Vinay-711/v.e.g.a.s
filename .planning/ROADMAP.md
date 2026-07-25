@@ -2,16 +2,17 @@
 
 ## Overview
 
-VEGAS starts with a basic FastMCP + LiveKit scaffold (Phase 1, complete). The next phase of development focuses on making the agent persistent and safe for real-world interactions by implementing state and a confirmation gate (Phase 2). Once secured, the agent gains the ability to delegate code execution (Phase 3), handle daily calendar/email workflows (Phase 4), and automate browser/file operations (Phase 5). Finally, everything is thoroughly audited to ensure strict adherence to the safety gate (Phase 6).
+VEGAS starts with a basic FastMCP scaffold (Phase 1, complete). The next phase of development focused on making the agent persistent and safe for real-world interactions by implementing state and a confirmation gate (Phase 2, complete). The system is now pivoting to a custom, premium Web UI (Phase 3) that replaces the original voice agent design. Once the Web UI is active, the agent gains the ability to delegate code execution (Phase 4), handle daily calendar/email workflows (Phase 5), and automate browser/file operations (Phase 6). Finally, everything is thoroughly audited to ensure strict adherence to the safety gate (Phase 7).
 
 ## Phases
 
-- [x] **Phase 1: Core Scaffold** - Basic FastMCP server and LiveKit voice pipeline
-- [x] **Phase 2: State & Safety** - Persistent SQLite memory and the `requires_confirmation` decorator (completed 2026-07-09)
-- [ ] **Phase 3: Code Delegation** - Tool to dispatch coding tasks to Antigravity CLI
-- [ ] **Phase 4: Daily Workflows** - Google Calendar integration, Gmail drafts, and morning briefings
-- [ ] **Phase 5: Browser Automation** - Playwright integration and sandboxed file operations
-- [ ] **Phase 6: Audit & Hardening** - Rigorous instruction wiring and safety gate verification
+- [x] **Phase 1: Core Scaffold** - Basic FastMCP server and tool pipeline
+- [x] **Phase 2: State & Safety** - Persistent SQLite memory and the `requires_confirmation` decorator
+- [x] **Phase 3: Web UI Integration** - Custom Vite/React Web App and FastAPI backend
+- [x] **Phase 4: Code Delegation** - Tool to dispatch coding tasks to Antigravity CLI
+- [x] **Phase 5: Daily Workflows** - Google Calendar integration, Gmail drafts, and morning briefings
+- [x] **Phase 6: Browser Automation** - Playwright integration and sandboxed file operations
+- [x] **Phase 7: Audit & Hardening** - Rigorous instruction wiring and safety gate verification
 
 ## Phase Details
 
@@ -20,22 +21,24 @@ VEGAS starts with a basic FastMCP + LiveKit scaffold (Phase 1, complete). The ne
 
 ### Phase 1: Core Scaffold
 
-**Goal**: Establish the basic voice and tool pipeline.
+**Goal**: Establish the basic tool pipeline.
 **Depends on**: Nothing
-**Requirements**: [CORE-01, CORE-02, CORE-03, CORE-04]
+**Requirements**: [CORE-01, CORE-02, CORE-03]
 **Success Criteria** (what must be TRUE):
 
   1. FastMCP server runs without errors.
-  2. LiveKit agent can hear, process via Gemini, and speak back.
-  3. Agent can successfully execute a basic search tool.
+  2. Agent can successfully execute a basic search tool.
 
 **Plans**: 1 plan
 
 Plans:
 
-- [x] 01-01: Build FastMCP and LiveKit integration
+- [x] 01-01: Build FastMCP integration
 
 </details>
+
+<details>
+<summary>✅ Phase 2: State & Safety - SHIPPED</summary>
 
 ### Phase 2: State & Safety
 
@@ -53,29 +56,61 @@ Plans:
 Plans:
 
 - [x] 02-01: Implement SQLite memory for persistence
-- [ ] 02-02: Build the `requires_confirmation` decorator and confirmation loop
+- [x] 02-02: Build the `requires_confirmation` decorator and confirmation loop
 
-### Phase 3: Code Delegation
+</details>
 
-**Goal**: Enable the voice agent to perform coding tasks by dispatching them to an agentic CLI.
+<details>
+<summary>✅ Phase 3: Web UI Integration - SHIPPED</summary>
+
+### Phase 3: Web UI Integration
+
+**Goal**: Pivot away from LiveKit to a custom, premium Web UI for VEGAS.
 **Depends on**: Phase 2
-**Requirements**: [CODE-01, CODE-02, CODE-03]
+**Requirements**: [WEB-01, WEB-02, WEB-03]
 **Success Criteria** (what must be TRUE):
 
-  1. The voice agent can trigger the Antigravity CLI via a subprocess.
-  2. The tool captures stdout/stderr when the CLI finishes.
-  3. The voice agent summarizes the CLI output verbally.
+  1. The LiveKit voice agent codebase is fully removed.
+  2. A lightweight backend API connects the FastMCP server with the frontend.
+  3. A premium, beautifully designed Vite/React frontend serves as the chat interface.
 
 **Plans**: 1 plan
 
 Plans:
 
-- [ ] 03-01: Create Antigravity CLI delegation tool
+- [x] 03-01: Remove LiveKit, Build API Backend and Web UI
 
-### Phase 4: Daily Workflows
+</details>
+
+<details>
+<summary>✅ Phase 4: Code Delegation - SHIPPED</summary>
+
+### Phase 4: Code Delegation
+
+**Goal**: Enable the assistant to perform coding tasks by dispatching them to an agentic CLI.
+**Depends on**: Phase 3
+**Requirements**: [CODE-01, CODE-02, CODE-03]
+**Success Criteria** (what must be TRUE):
+
+  1. The assistant can trigger the Antigravity CLI via a subprocess.
+  2. The tool captures stdout/stderr when the CLI finishes.
+  3. The assistant summarizes the CLI output in the Web UI.
+
+**Plans**: 1 plan
+
+Plans:
+
+- [x] 04-01: Create Antigravity CLI delegation tool
+
+</details>
+
+<details>
+<summary>✅ Phase 5: Daily Workflows - SHIPPED</summary>
+
+### Phase 5: Daily Workflows
 
 **Goal**: Connect the agent to Google Workspace for daily automation.
-**Depends on**: Phase 3
+**Depends on**: Phase 4
 **Requirements**: [WORK-01, WORK-02, WORK-03]
 **Success Criteria** (what must be TRUE):
 
@@ -87,31 +122,41 @@ Plans:
 
 Plans:
 
-- [ ] 04-01: Google Calendar and Gmail API integration
-- [ ] 04-02: Morning briefing composer logic
+- [x] 05-01: Google Calendar and Gmail API integration
+- [x] 05-02: Morning briefing composer logic
 
-### Phase 5: Browser Automation
+</details>
+
+<details>
+<summary>✅ Phase 6: Browser Automation - SHIPPED</summary>
+
+### Phase 6: Browser Automation
 
 **Goal**: Allow the agent to interact with the web and local files.
-**Depends on**: Phase 4
+**Depends on**: Phase 5
 **Requirements**: [AUTO-01, AUTO-02, AUTO-03, AUTO-04]
 **Success Criteria** (what must be TRUE):
 
   1. The agent can load a webpage and extract text using Playwright.
   2. The agent can read a local file safely.
-  3. Destructive file operations trigger the Phase 2 confirmation gate.
+  3. Destructive file operations trigger the Phase 2 confirmation gate in the Web UI.
 
 **Plans**: 2 plans
 
 Plans:
 
-- [ ] 05-01: Playwright MCP tool integration
-- [ ] 05-02: Sandboxed file system tools
+- [x] 06-01: Playwright MCP tool integration
+- [x] 06-02: Sandboxed file system tools
 
-### Phase 6: Audit & Hardening
+</details>
+
+<details>
+<summary>✅ Phase 7: Audit & Hardening - SHIPPED</summary>
+
+### Phase 7: Audit & Hardening
 
 **Goal**: Finalize tool instructions and guarantee safety constraints.
-**Depends on**: Phase 5
+**Depends on**: Phase 6
 **Requirements**: [AUDT-01, AUDT-02]
 **Success Criteria** (what must be TRUE):
 
@@ -122,18 +167,21 @@ Plans:
 
 Plans:
 
-- [ ] 06-01: Codebase audit and documentation review
+- [x] 07-01: Codebase audit and documentation review
+
+</details>
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Core Scaffold | 1/1 | Complete | 2026-07-09 |
-| 2. State & Safety | 1/1 | Complete    | 2026-07-09 |
-| 3. Code Delegation | 0/1 | Not started | - |
-| 4. Daily Workflows | 0/2 | Not started | - |
-| 5. Browser Automation| 0/2 | Not started | - |
-| 6. Audit & Hardening | 0/1 | Not started | - |
+| 2. State & Safety | 2/2 | Complete | 2026-07-09 |
+| 3. Web UI Integration | 1/1 | Complete | 2026-07-17 |
+| 4. Code Delegation | 1/1 | Complete | 2026-07-17 |
+| 5. Daily Workflows | 2/2 | Complete | 2026-07-17 |
+| 6. Browser Automation| 2/2 | Complete | 2026-07-17 |
+| 7. Audit & Hardening | 1/1 | Complete | 2026-07-17 |

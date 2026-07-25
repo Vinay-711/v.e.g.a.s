@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>V.E.G.A.S. AIOS — Mission Control HUD</title>
+  
+  <link rel="stylesheet" href="/static/aether.css"/>
+  <script src="/static/voice.js"></script>
+  <script src="/static/ai_core.js" defer></script>
+  <script src="/static/aether.js" defer></script>
+</head>
+<body>
+
+  <!-- Scanline CRT Effect -->
+  <div class="scanline"></div>
+
+  <!-- Main Mission Control Layout Shell -->
+  <div class="mission-control">
+
+    <!-- Top Telemetry Header -->
+    <header class="hud-header">
+      <div class="hud-title-group">
+        <div class="window-controls">
+          <span class="win-dot close" title="Close AIOS"></span>
+          <span class="win-dot min" title="Minimize Window"></span>
+          <span class="win-dot max" title="Fullscreen HUD"></span>
+        </div>
+        <span class="hud-brand">V.E.G.A.S.</span>
+        <span class="hud-badge" id="systemStateBadge">KERNEL ONLINE</span>
+      </div>
+
+      <div class="hud-telemetry-strip">
+        <div class="telemetry-item">
+          <span class="material-symbols-outlined" style="font-size:16px; color:var(--hud-cyan);">memory</span>
+          <span>CPU: <strong class="telemetry-val" id="telemetryCpu">--%</strong></span>
+        </div>
+        <div class="telemetry-item">
+          <span class="material-symbols-outlined" style="font-size:16px; color:var(--hud-cyan);">storage</span>
+          <span>RAM: <strong class="telemetry-val" id="telemetryRam">-- GB</strong></span>
+        </div>
+        <div class="telemetry-item">
+          <span class="material-symbols-outlined" style="font-size:16px; color:var(--hud-cyan);">battery_charging_50</span>
+          <span>BATT: <strong class="telemetry-val" id="telemetryBattery">--%</strong></span>
+        </div>
+        <div class="telemetry-item">
+          <span class="material-symbols-outlined" style="font-size:16px; color:var(--hud-cyan);">wifi</span>
+          <span>WIFI: <strong class="telemetry-val" id="telemetryWifi">CONNECTED</strong></span>
+        </div>
+        <div class="telemetry-item">
+          <span class="material-symbols-outlined" style="font-size:16px; color:var(--hud-gold);">smartphone</span>
+          <span>PHONE: <strong class="telemetry-val" id="telemetryPhone" style="color:var(--hud-gold);">STANDBY</strong></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Stage -->
+    <main class="hud-stage">
+
+      <!-- Left Panel: 8 Specialist Agents & Task Waves -->
+      <aside class="hud-panel">
+        <div class="panel-header">
+          <span>SPECIALIST AGENTS (8)</span>
+          <span class="material-symbols-outlined" style="font-size:18px;">hub</span>
+        </div>
+
+        <div class="agents-grid" id="agentsGrid">
+          <!-- 1. Computer -->
+          <div class="agent-card" id="agent-computer" data-role="computer">
+            <div class="agent-card-header">
+              <span class="agent-name">💻 Computer Agent</span>
+              <span class="agent-status-led"></span>
+            </div>
+            <div class="agent-tools-count">18 macOS Tools</div>
+          </div>
+          <!-- 2. Browser -->
+          <div class="agent-card" id="agent-browser" data-role="browser">
+            <div class="agent-card-header">
+              <span class="agent-name">🌐 Browser Agent</span>
+              <span class="agent-status-led"></span>
+            </div>
+            <div class="agent-tools-count">6 Playwright Tools</div>
+          </div>
+          <!-- 3. Developer -->
+          <div class="agent-card" id="agent-developer" data-role="developer">
+            <div class="agent-card-header">
+              <span class="agent-name">🛠️ Developer Agent</span>
+              <span class="agent-status-led"></span>
+            </div>
+            <div class="agent-tools-count">6 Code/File Tools</div>
+          </div>
+          <!-- 4. Git -->
+          <div class="agent-card" id="agent-git" data-role="git">
+            <div class="agent-card-header">
+              <span class="agent-name">📊 Git Agent</span>
+              <span class="agent-status-led"></span>
+            </div>
+            <div class="agent-tools-count">4 Git Ops Tools</div>
+          </div>
+          <!-- 5. Memory -->
+          <div class="agent-card" id="agent-memory" data-role="memory">
+            <div class="agent-card-header">
+              <span class="agent-name">🧠 Memory Agent</span>
+              <span class="agent-status-led"></span>
+            </div>
+            <div class="agent-tools-count">8 Memory Tools</div>
+          </div>
+          <!-- 6. Calendar -->
+          <div class="agent-card" id="agent-calendar" data-role="calendar">
+            <div class="agent-card-header">
+              <span class="agent-name">📅 Calendar Agent</span>
+              <span class="agent-status-led"></span>
+            </div>
+            <div class="agent-tools-count">2 Workflow Tools</div>
+          </div>
+          <!-- 7. Email -->
+          <div class="agent-card" id="agent-email" data-role="email">
+            <div class="agent-card-header">
+              <span class="agent-name">✉️ Email Agent</span>
+              <span class="agent-status-led"></span>
+            </div>
+            <div class="agent-tools-count">1 Gmail Tool</div>
+          </div>
+          <!-- 8. Phone -->
+          <div class="agent-card" id="agent-phone" data-role="phone">
+            <div class="agent-card-header">
+              <span class="agent-name">📱 Phone Agent</span>
+              <span class="agent-status-led"></span>
+            </div>
+            <div class="agent-tools-count">13 ADB/Wi-Fi Tools</div>
+          </div>
+        </div>
+
+        <div class="panel-header" style="margin-top:16px;">
+          <span>EXECUTION TIMELINE</span>
+          <span class="material-symbols-outlined" style="font-size:18px;">timeline</span>
+        </div>
+        <div id="executionTimeline" style="font-family:var(--font-mono); font-size:12px; color:var(--text-dim); flex:1; overflow-y:auto;">
+          <div style="padding:6px; background:rgba(255,255,255,0.02); border-radius:4px; margin-bottom:4px;">
+            <span style="color:var(--hud-cyan);">● Plan Status: IDLE</span> — Ready for goals
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center Stage: Living AI Core Canvas -->
+      <section class="ai-core-stage">
+        <div class="core-status-overlay">
+          <div class="core-state-indicator" id="coreStateIndicator">AI CORE ONLINE</div>
+          <div style="font-family:var(--font-tech); font-size:13px; color:var(--text-dim); letter-spacing:0.1em;">
+            SAY "HEY VEGAS" OR ENTER GOAL BELOW
+          </div>
+        </div>
+
+        <!-- 60fps HTML5 Canvas -->
+        <canvas id="aiCoreCanvas"></canvas>
+      </section>
+
+      <!-- Right Panel: F1 Telemetry & Android Companion -->
+      <aside class="hud-panel">
+        <div class="panel-header">
+          <span>F1 HARDWARE TELEMETRY</span>
+          <span class="material-symbols-outlined" style="font-size:18px;">speed</span>
+        </div>
+
+        <div class="f1-telemetry-panel">
+          <div class="f1-gauge">
+            <div class="gauge-label">
+              <span>CPU LOAD</span>
+              <span id="gaugeCpuVal">0%</span>
+            </div>
+            <div class="gauge-bar-bg">
+              <div class="gauge-bar-fill" id="gaugeCpuFill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="f1-gauge">
+            <div class="gauge-label">
+              <span>RAM USAGE</span>
+              <span id="gaugeRamVal">0%</span>
+            </div>
+            <div class="gauge-bar-bg">
+              <div class="gauge-bar-fill" id="gaugeRamFill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="f1-gauge">
+            <div class="gauge-label">
+              <span>CANVAS GPU FPS</span>
+              <span id="gaugeFpsVal" style="color:var(--hud-green);">60 FPS</span>
+            </div>
+            <div class="gauge-bar-bg">
+              <div class="gauge-bar-fill" style="width: 100%; background:var(--hud-green);"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-header" style="margin-top:16px;">
+          <span>ANDROID COMPANION</span>
+          <span class="material-symbols-outlined" style="font-size:18px;">phone_android</span>
+        </div>
+        <div id="companionCard" style="font-family:var(--font-mono); font-size:12px; color:var(--text-dim); display:flex; flex-direction:column; gap:6px;">
+          <div>- Status: <span id="compConn" style="color:var(--hud-gold);">Wi-Fi Standby</span></div>
+          <div>- Battery: <span id="compBatt">--%</span></div>
+          <div>- Network: <span id="compSsid">--</span></div>
+          <div>- Notifications Mirrored: <span id="compNotifs">0</span></div>
+        </div>
+
+        <div class="panel-header" style="margin-top:16px;">
+          <span>KNOWLEDGE GRAPH</span>
+          <span class="material-symbols-outlined" style="font-size:18px;">account_tree</span>
+        </div>
+        <div style="font-family:var(--font-mono); font-size:12px; color:var(--hud-cyan);">
+          Semantic Facts: <strong id="factCount">0</strong> | Graph Relations: <strong id="relationCount">0</strong>
+        </div>
+      </aside>
+
+    </main>
+
+    <!-- Bottom Command Bar & Execution Terminal -->
+    <footer class="hud-dock">
+      <div class="command-bar-group">
+        <div class="command-input-container">
+          <button class="mic-wake-btn" id="micWakeBtn" title="Wake VEGAS / Start Listening">
+            <span class="material-symbols-outlined">mic</span>
+          </button>
+          <input type="text" class="goal-input" id="goalInput" placeholder="Enter system goal or command (e.g. 'Update my project', 'Take screenshot', 'Check battery')..."/>
+          <button class="execute-btn" id="executeBtn">EXECUTE GOAL</button>
+        </div>
+        
+        <div style="font-family:var(--font-tech); font-size:12px; color:var(--text-dim); display:flex; justify-content:space-between; padding:0 4px;">
+          <span>PROMPT MODE: SYSTEM GOAL PLANNER</span>
+          <span>PRESS ENTER TO DELEGATE WORK</span>
+        </div>
+      </div>
+
+      <!-- Live Execution Log Terminal -->
+      <div class="terminal-feed" id="terminalFeed">
+        <div class="terminal-line success">[SYSTEM INITIALIZED] VEGAS AIOS Mission Control Online.</div>
+        <div class="terminal-line">[LOG] Connected to 127.0.0.1:8001 backend.</div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Confirmation Gate Modal Overlay -->
+  <div class="modal-overlay" id="confirmationModal">
+    <div class="confirmation-card">
+      <div class="confirmation-header">
+        <span class="material-symbols-outlined" style="font-size:28px;">warning</span>
+        <span>CONFIRMATION REQUIRED</span>
+      </div>
+      <div style="font-family:var(--font-body); font-size:14px; color:var(--text-main); line-height:1.5;" id="confirmationDetail">
+        The tool requires user approval before proceeding.
+      </div>
+      <div class="confirmation-actions">
+        <button class="btn-cancel" id="confirmCancelBtn">CANCEL ACTION</button>
+        <button class="btn-confirm" id="confirmApproveBtn">APPROVE EXECUTION</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agent Detail Inspector Modal Overlay -->
+  <div class="modal-overlay" id="agentModal">
+    <div class="confirmation-card" style="border-color:var(--hud-cyan); box-shadow: 0 0 30px rgba(0,243,255,0.3);">
+      <div class="confirmation-header" style="color:var(--hud-cyan);">
+        <span class="material-symbols-outlined" style="font-size:28px;">engineering</span>
+        <span id="agentModalTitle">AGENT INSPECTOR</span>
+      </div>
+      <div style="font-family:var(--font-mono); font-size:13px; color:var(--text-main);" id="agentModalBody">
+        Loading agent manifest...
+      </div>
+      <div class="confirmation-actions">
+        <button class="btn-confirm" id="agentModalCloseBtn" style="background:var(--hud-cyan);">CLOSE INSPECTOR</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

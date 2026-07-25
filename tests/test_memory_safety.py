@@ -1,21 +1,8 @@
 import pytest
 import re
-from vegas.memory import _get_conn, set_preference, get_preference, update_task_status
-from vegas.safety import requires_confirmation, pop_pending_action, _pending_actions
-
-def confirm_task_local(task_id: str) -> str:
-    entry = pop_pending_action(task_id)
-    if entry is None:
-        return f"No pending action found for task '{task_id}'."
-    fn, args, kwargs = entry
-    result = fn(*args, **kwargs)
-    update_task_status(task_id, "completed", result=str(result))
-    return f"confirmed and executed. Result: {result}"
-
-def cancel_task_local(task_id: str) -> str:
-    pop_pending_action(task_id)
-    update_task_status(task_id, "cancelled")
-    return f"has been cancelled"
+from vegas.memory import _get_conn, set_preference, get_preference
+from vegas.safety import requires_confirmation, _pending_actions
+from vegas.tools.memory import confirm_task, cancel_task
 
 @pytest.fixture(autouse=True)
 def setup_db():
@@ -46,7 +33,7 @@ def test_confirm_task_executes():
     result = dangerous_function("target")
     task_id = re.search(r"confirm task ([a-f0-9\-]+)", result).group(1)
     
-    confirmation_result = confirm_task_local(task_id)
+    confirmation_result = confirm_task(task_id)
     assert "confirmed and executed" in confirmation_result
     assert "destroyed target" in confirmation_result
     
@@ -57,7 +44,8 @@ def test_cancel_task():
     result = dangerous_function("target")
     task_id = re.search(r"confirm task ([a-f0-9\-]+)", result).group(1)
     
-    cancellation_result = cancel_task_local(task_id)
-    assert "has been cancelled" in cancellation_result
+    cancellation_result = cancel_task(task_id)
+    assert "cancelled" in cancellation_result
     assert task_id not in _pending_actions
+
 

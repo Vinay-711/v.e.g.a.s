@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AetherOS - Voice Interface</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-container": "#00716a",
+                      "surface": "#131313",
+                      "on-tertiary-container": "#6000dd",
+                      "surface-container-low": "#1c1b1b",
+                      "on-primary-fixed": "#001f28",
+                      "primary-fixed-dim": "#4cd6ff",
+                      "tertiary-container": "#cbb5ff",
+                      "surface-container-high": "#2a2a2a",
+                      "on-primary": "#003543",
+                      "outline": "#859399",
+                      "on-secondary-fixed": "#00201d",
+                      "tertiary-fixed-dim": "#d1bcff",
+                      "outline-variant": "#3c494e",
+                      "surface-container-highest": "#353534",
+                      "surface-container": "#201f1f",
+                      "primary-container": "#00d1ff",
+                      "on-tertiary-fixed-variant": "#5700c9",
+                      "surface-dim": "#131313",
+                      "on-secondary-fixed-variant": "#00504b",
+                      "on-primary-container": "#00566a",
+                      "tertiary": "#e4d6ff",
+                      "on-surface-variant": "#bbc9cf",
+                      "inverse-on-surface": "#313030",
+                      "surface-tint": "#4cd6ff",
+                      "on-tertiary": "#3c0090",
+                      "on-error-container": "#ffdad6",
+                      "on-error": "#690005",
+                      "surface-bright": "#3a3939",
+                      "tertiary-fixed": "#e9ddff",
+                      "on-background": "#e5e2e1",
+                      "surface-variant": "#353534",
+                      "inverse-surface": "#e5e2e1",
+                      "secondary-fixed": "#00fdee",
+                      "on-secondary": "#003733",
+                      "surface-container-lowest": "#0e0e0e",
+                      "on-primary-fixed-variant": "#004e60",
+                      "primary": "#a4e6ff",
+                      "inverse-primary": "#00677f",
+                      "on-tertiary-fixed": "#23005b",
+                      "secondary-container": "#00fdee",
+                      "error-container": "#93000a",
+                      "on-surface": "#e5e2e1",
+                      "secondary-fixed-dim": "#00ded1",
+                      "secondary": "#ffffff",
+                      "background": "#131313",
+                      "primary-fixed": "#b7eaff",
+                      "error": "#ffb4ab"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-md": "16px",
+                      "stack-sm": "8px",
+                      "stack-lg": "32px",
+                      "glass-padding": "20px",
+                      "unit": "4px",
+                      "gutter": "24px",
+                      "container-padding": "32px"
+              },
+              "fontFamily": {
+                      "headline-sm": [
+                              "Geist"
+                      ],
+                      "label-md": [
+                              "JetBrains Mono"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Geist"
+                      ],
+                      "headline-lg": [
+                              "Geist"
+                      ],
+                      "display-lg": [
+                              "Geist"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "letterSpacing": "0em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "0.04em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "letterSpacing": "0em",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body {
+            background-color: #050505;
+            color: #e5e2e1;
+            overflow-x: hidden;
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-panel-elevated {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 64px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        .primary-glow-btn {
+            background: linear-gradient(135deg, #00d1ff 0%, #00fdee 100%);
+            box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.2);
+            color: #000;
+        }
+
+        .pulse-wave {
+            animation: pulse-op 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-op {
+            0%, 100% { opacity: 0.3; transform: scaleY(0.8); }
+            50% { opacity: 1; transform: scaleY(1.2); }
+        }
+
+        /* Subtle radial gradient background */
+        .bg-radial {
+            background: radial-gradient(circle at center, rgba(0, 209, 255, 0.05) 0%, rgba(5, 5, 5, 1) 70%);
+        }
+        
+        .transcript-mask {
+            mask-image: linear-gradient(to top, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+        }
+    </style>
+</head>
+<body class="bg-radial min-h-screen text-on-surface font-body-md flex">
+<!-- SideNavBar -->
+
+<aside class="fixed left-0 top-16 bottom-0 flex flex-col py-stack-md bg-surface-container/10 dark:bg-surface-container-lowest/10 backdrop-blur-2xl border-r border-white/5 shadow-[64px_0_64px_-20px_rgba(0,0,0,0.4)] h-full w-64 z-40 hidden md:flex">
+    <!-- Header -->
+    <div class="px-container-padding mb-8 flex flex-col items-center justify-center pt-4">
+        <div class="w-16 h-16 rounded-full glass-card flex items-center justify-center mb-4 relative">
+            <div class="absolute inset-2 rounded-full bg-gradient-to-tr from-primary to-secondary-fixed opacity-50 blur-sm animate-pulse"></div>
+            <span class="material-symbols-outlined text-primary relative z-10" style="font-size: 32px;">graphic_eq</span>
+        </div>
+        <h2 class="font-display-lg text-headline-sm text-primary">Aether Core</h2>
+        <span class="text-label-md font-label-md text-secondary-fixed-dim mt-1">V4.2 Active</span>
+    </div>
+    <!-- Tabs -->
+    
+<div class="flex-1 overflow-y-auto px-4 flex flex-col gap-1">
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5" href="/index.html">
+        <span class="material-symbols-outlined">dashboard</span>
+        Dashboard
+    </a>
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5" href="/agents.html">
+        <span class="material-symbols-outlined">smart_toy</span>
+        Agents
+    </a>
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5" href="/memory.html">
+        <span class="material-symbols-outlined">memory</span>
+        Memory
+    </a>
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5" href="/control.html">
+        <span class="material-symbols-outlined">settings_remote</span>
+        Control
+    </a>
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5" href="/browser.html">
+        <span class="material-symbols-outlined">language</span>
+        Browser
+    </a>
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5" href="/files.html">
+        <span class="material-symbols-outlined">folder_open</span>
+        Files
+    </a>
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-secondary-fixed bg-white/5 border-l-2 border-secondary-fixed-dim pl-4" href="/terminal.html">
+        <span class="material-symbols-outlined">terminal</span>
+        Terminal
+    </a>
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5" href="/automation.html">
+        <span class="material-symbols-outlined">bolt</span>
+        Automation
+    </a>
+    <a class="flex items-center gap-3 py-2 pl-4 transition-all hover:scale-102 duration-300 font-body-md text-on-surface-variant hover:text-on-surface hover:bg-white/5" href="/settings.html">
+        <span class="material-symbols-outlined">settings</span>
+        Settings
+    </a>
+</div>
+
+    <!-- Footer / CTA -->
+    <div class="px-4 mt-auto pt-4 border-t border-white/5 pb-20">
+        <button class="w-full py-2 mb-4 rounded-lg border border-white/10 text-on-surface hover:bg-white/5 transition-colors font-body-md flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+            New Thread
+        </button>
+        <div class="flex justify-between px-2 text-label-md font-label-md text-on-surface-variant">
+            <div class="flex items-center gap-1">
+                <span class="material-symbols-outlined" style="font-size: 14px;">sensors</span>
+                Status
+            </div>
+            <div class="flex items-center gap-1">
+                <span class="material-symbols-outlined" style="font-size: 14px;">timer</span>
+                Uptime
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- TopNavBar -->
+<header class="bg-white/3 dark:bg-white/3 backdrop-blur-3xl fixed top-0 w-full z-50 border-b border-white/10 shadow-2xl shadow-black/40 flex justify-between items-center px-container-padding h-16 transition-all duration-300 ease-out">
+<div class="flex items-center gap-4">
+<span class="font-display-lg text-headline-sm tracking-widest text-on-surface">AetherOS</span>
+<div class="hidden md:flex items-center ml-8 bg-black/40 rounded-full px-4 py-1.5 border-b border-primary/50 focus-within:border-primary transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px] mr-2">search</span>
+<input class="bg-transparent border-none text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:ring-0 w-48 font-label-md" placeholder="Query system..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant hover:text-primary transition-colors duration-200 hover:scale-105">
+<span class="material-symbols-outlined">memory</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors duration-200 hover:scale-105">
+<span class="material-symbols-outlined">sensors</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors duration-200 hover:scale-105">
+<span class="material-symbols-outlined">account_tree</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-white/20">
+<img class="w-full h-full object-cover" data-alt="A high contrast macro shot of a sleek, futuristic metallic surface reflecting cyan neon lights in a dark, atmospheric environment. The texture is smooth and engineered, conveying a premium tech aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDo_ij4pwy4ae6v7lWizogydgoXs7fyHXIleek0Lc_35TnYavvGK18QcifUhBz-fONOtPFjFNI4xWqGkyT-DRTFVpVMsFczz7krO0QlPLWKV7yxrClQHCHPkHHU1_Ugcs0cus66Sx2vgi1nlHAgcoxpmq3nVwtOLy0hWftoki6Jc3mv62q_FnUAEtglqpUAjWhIJD1btL-zJxbS2EnW123DUhijT3a87p3Dmi3QaDpxVrA_Dg_s22uXUQ"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area (Voice Interface) -->
+<main class="md:ml-64 pt-16 w-full min-h-screen relative overflow-hidden flex flex-col">
+<!-- Background 3D/Shader Layer -->
+<div class="absolute inset-0 z-0 opacity-60">
+<!-- STITCH_THREEJS_START:ANIMATION_11 class="absolute inset-0 w-full h-full" -->
+<div class="absolute inset-0 w-full h-full" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_11" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_11');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  const container = document.getElementById('threejs-container');
+const width = container.clientWidth || window.innerWidth;
+const height = container.clientHeight || window.innerHeight;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+camera.position.z = 5;
+
+const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+renderer.setSize(width, height);
+renderer.setPixelRatio(window.devicePixelRatio);
+container.appendChild(renderer.domElement);
+
+// Glowing Orb Geometry
+const geometry = new THREE.SphereGeometry(1.5, 64, 64);
+const material = new THREE.MeshPhongMaterial({
+    color: 0x00d1ff,
+    emissive: 0x00d1ff,
+    emissiveIntensity: 0.5,
+    transparent: true,
+    opacity: 0.8,
+    shininess: 100
+});
+const orb = new THREE.Mesh(geometry, material);
+scene.add(orb);
+
+// Outer Energy Ring
+const ringGeo = new THREE.TorusGeometry(2, 0.02, 16, 100);
+const ringMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.3 });
+const ring = new THREE.Mesh(ringGeo, ringMat);
+scene.add(ring);
+
+// Lights
+const ambientLight = new THREE.AmbientLight(0x404040);
+scene.add(ambientLight);
+const pointLight = new THREE.PointLight(0x00d1ff, 2, 10);
+pointLight.position.set(2, 2, 2);
+scene.add(pointLight);
+
+// Animation logic
+let time = 0;
+function animate() {
+    requestAnimationFrame(animate);
+    time += 0.01;
+    
+    // Pulsing effect
+    const pulse = 1 + Math.sin(time * 2) * 0.1;
+    orb.scale.set(pulse, pulse, pulse);
+    orb.rotation.y += 0.005;
+    
+    // Ring rotation
+    ring.rotation.z += 0.01;
+    ring.rotation.x += 0.005;
+    ring.scale.set(1 + Math.sin(time * 1.5) * 0.05, 1 + Math.sin(time * 1.5) * 0.05, 1);
+
+    renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+    const w = container.clientWidth || window.innerWidth;
+    const h = container.clientHeight || window.innerHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+});
+
+animate();
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_11 -->
+</div>
+<!-- Telemetry Floating Panels (Absolute Pos) -->
+<div class="absolute top-8 left-8 z-20 flex flex-col gap-4">
+<div class="glass-panel rounded-lg p-4 w-48 hover:scale-[1.02] transition-transform duration-300">
+<p class="font-label-md text-label-md text-on-surface-variant mb-1 uppercase">Confidence Score</p>
+<div class="flex items-end gap-2">
+<span class="font-headline-lg text-primary text-headline-lg">98.4</span>
+<span class="font-label-md text-label-md text-primary/70 pb-1">%</span>
+</div>
+<div class="w-full bg-surface-container-high h-1 mt-2 rounded-full overflow-hidden">
+<div class="bg-primary w-[98.4%] h-full shadow-[0_0_8px_rgba(0,209,255,0.8)]"></div>
+</div>
+</div>
+<div class="glass-panel rounded-lg p-4 w-48 hover:scale-[1.02] transition-transform duration-300">
+<p class="font-label-md text-label-md text-on-surface-variant mb-1 uppercase">Latency</p>
+<div class="flex items-end gap-2">
+<span class="font-headline-lg text-secondary-container text-headline-lg">12</span>
+<span class="font-label-md text-label-md text-secondary-container/70 pb-1">ms</span>
+</div>
+</div>
+</div>
+<div class="absolute top-8 right-8 z-20 flex flex-col gap-4 items-end">
+<div class="glass-panel rounded-lg p-4 w-56 hover:scale-[1.02] transition-transform duration-300 text-right">
+<p class="font-label-md text-label-md text-on-surface-variant mb-1 uppercase">Detected Emotion</p>
+<div class="flex items-center justify-end gap-2 text-primary">
+<span class="material-symbols-outlined text-[18px]">sentiment_neutral</span>
+<span class="font-headline-sm text-headline-sm">Calm / Neutral</span>
+</div>
+</div>
+<div class="glass-panel rounded-lg p-4 w-56 hover:scale-[1.02] transition-transform duration-300 text-right">
+<p class="font-label-md text-label-md text-on-surface-variant mb-1 uppercase">Language</p>
+<div class="flex items-center justify-end gap-2 text-on-surface">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">language</span>
+<span class="font-body-md text-body-md font-medium">English - US</span>
+</div>
+</div>
+</div>
+<!-- Center Active Region -->
+<div class="flex-1 flex flex-col items-center justify-end pb-12 z-20 relative px-container-padding">
+<!-- Transcript Area -->
+<div class="w-full max-w-2xl transcript-mask h-48 overflow-hidden flex flex-col justify-end mb-8">
+<div class="flex flex-col gap-4 font-headline-sm text-headline-sm text-center tracking-wide text-on-surface/50">
+<p class="blur-[2px]">Initialize deep analysis protocol...</p>
+<p class="blur-[1px]">Cross-referencing global databases...</p>
+<p class="text-primary font-medium glow-text blur-none transition-all duration-300">"Analyzing structural integrity of the main frame..."</p>
+</div>
+</div>
+<!-- Waveform & Controls -->
+<div class="glass-panel-elevated w-full max-w-3xl rounded-2xl p-6 flex flex-col items-center gap-6">
+<!-- Audio Waveform Visualization -->
+<div class="flex items-center justify-center gap-1 h-12 w-full px-8">
+<div class="w-1.5 bg-primary rounded-full h-4 pulse-wave" style="animation-delay: 0.1s"></div>
+<div class="w-1.5 bg-primary rounded-full h-8 pulse-wave" style="animation-delay: 0.2s"></div>
+<div class="w-1.5 bg-secondary-container rounded-full h-12 pulse-wave" style="animation-delay: 0.3s"></div>
+<div class="w-1.5 bg-primary rounded-full h-6 pulse-wave" style="animation-delay: 0.4s"></div>
+<div class="w-1.5 bg-primary rounded-full h-10 pulse-wave" style="animation-delay: 0.5s"></div>
+<div class="w-1.5 bg-secondary-container rounded-full h-12 pulse-wave" style="animation-delay: 0.3s"></div>
+<div class="w-1.5 bg-primary rounded-full h-4 pulse-wave" style="animation-delay: 0.1s"></div>
+<!-- mirror -->
+<div class="w-1.5 bg-primary rounded-full h-4 pulse-wave" style="animation-delay: 0.1s"></div>
+<div class="w-1.5 bg-secondary-container rounded-full h-12 pulse-wave" style="animation-delay: 0.3s"></div>
+<div class="w-1.5 bg-primary rounded-full h-10 pulse-wave" style="animation-delay: 0.5s"></div>
+<div class="w-1.5 bg-primary rounded-full h-6 pulse-wave" style="animation-delay: 0.4s"></div>
+<div class="w-1.5 bg-secondary-container rounded-full h-12 pulse-wave" style="animation-delay: 0.3s"></div>
+<div class="w-1.5 bg-primary rounded-full h-8 pulse-wave" style="animation-delay: 0.2s"></div>
+<div class="w-1.5 bg-primary rounded-full h-4 pulse-wave" style="animation-delay: 0.1s"></div>
+</div>
+<!-- Status & Action -->
+<div class="flex items-center justify-between w-full mt-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-error animate-pulse shadow-[0_0_8px_rgba(255,180,171,0.8)]"></div>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase">Mic Active</span>
+</div>
+<button class="bg-surface-container/50 border border-error/30 text-error hover:bg-error/10 hover:border-error/60 px-8 py-3 rounded-full font-label-md text-label-md font-bold transition-all duration-300 flex items-center gap-2 shadow-[0_0_20px_rgba(255,180,171,0.1)] hover:shadow-[0_0_30px_rgba(255,180,171,0.3)] backdrop-blur-md">
+<span class="material-symbols-outlined text-[18px]">mic_off</span>
+                        STOP LISTENING
+                    </button>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-container text-[16px]">graphic_eq</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase">Noise Canceling</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+// Global VEGAS OS Integration Script
+const API_URL = 'http://127.0.0.1:8001';
+
+let daemonStatusSocket = null;
+let daemonStatusReconnectTimer = null;
+let daemonStatusReconnectAttempts = 0;
+let daemonStatusDisposed = false;
+
+function renderDaemonStatus(daemon, planner) {
+    if (!daemon) return;
+
+    let badge = document.getElementById('vegas-daemon-status');
+    if (!badge) {
+        badge = document.createElement('div');
+        badge.id = 'vegas-daemon-status';
+        badge.setAttribute('aria-live', 'polite');
+        badge.style.cssText = [
+            'position:fixed', 'right:16px', 'bottom:16px', 'z-index:100001',
+            'display:flex', 'align-items:center', 'gap:8px', 'padding:8px 12px',
+            'border-radius:999px', 'font:600 10px/1.2 ui-monospace,SFMono-Regular,monospace',
+            'letter-spacing:.08em', 'background:rgba(7,12,18,.88)',
+            'border:1px solid rgba(255,255,255,.14)', 'color:#dcecff',
+            'backdrop-filter:blur(12px)'
+        ].join(';');
+        document.body.appendChild(badge);
+    }
+
+    const state = String(daemon.state || 'offline').toUpperCase();
+    const wakeWord = String((daemon.wake_word || {}).state || 'unknown').toUpperCase();
+    const voice = String((daemon.voice || {}).state || 'unknown').toUpperCase();
+    const plannerState = String(((planner || {}).active || {}).status || 'idle').toUpperCase();
+    const healthy = state === 'RUNNING' && !daemon.stale;
+    badge.textContent = `● VEGAS DAEMON ${state} · WAKE ${wakeWord} · VOICE ${voice} · PLAN ${plannerState}`;
+    badge.style.borderColor = healthy ? 'rgba(16,185,129,.55)' : 'rgba(245,158,11,.55)';
+    badge.style.color = healthy ? '#b7f7d7' : '#fde6b0';
+}
+
+function connectDaemonStatusSocket() {
+    if (daemonStatusDisposed || !window.WebSocket) return;
+    const wsUrl = `${API_URL.replace(/^http/, 'ws')}/api/daemon/status/ws`;
+    daemonStatusSocket = new WebSocket(wsUrl);
+
+    daemonStatusSocket.onmessage = event => {
+        try {
+            const message = JSON.parse(event.data);
+            if (message.type === 'daemon_status') {
+                renderDaemonStatus(message.payload);
+                daemonStatusReconnectAttempts = 0;
+            }
+        } catch (_) {
+            // The regular REST telemetry poll remains a safe fallback.
+        }
+    };
+
+    daemonStatusSocket.onerror = () => daemonStatusSocket.close();
+    daemonStatusSocket.onclose = () => {
+        if (daemonStatusDisposed) return;
+        const delay = Math.min(30000, 1000 * (2 ** daemonStatusReconnectAttempts));
+        daemonStatusReconnectAttempts += 1;
+        daemonStatusReconnectTimer = window.setTimeout(connectDaemonStatusSocket, delay);
+    };
+}
+
+window.addEventListener('beforeunload', () => {
+    daemonStatusDisposed = true;
+    if (daemonStatusReconnectTimer) window.clearTimeout(daemonStatusReconnectTimer);
+    if (daemonStatusSocket) daemonStatusSocket.close();
+});
+
+connectDaemonStatusSocket();
+
+// Update Telemetry/Status info across all pages
+async function updateTelemetry() {
+    try {
+        const res = await fetch(`${API_URL}/api/system-status`);
+        const data = await res.json();
+        renderDaemonStatus(data.daemon, data.planner);
+        
+        // Update CPU percent
+        const cpuElements = document.querySelectorAll('.font-headline-sm.text-secondary-fixed');
+        cpuElements.forEach(el => {
+            if (el.textContent.includes('%') || el.previousElementSibling?.textContent === 'CPU') {
+                el.textContent = `${data.cpu_percent}%`;
+                const bar = el.nextElementSibling?.firstElementChild;
+                if (bar) bar.style.width = `${data.cpu_percent}%`;
+            }
+        });
+        
+        // Update Memory info
+        const memElements = document.querySelectorAll('.font-headline-sm.text-primary');
+        memElements.forEach(el => {
+            if (el.textContent.includes('GB') || el.previousElementSibling?.textContent === 'MEM') {
+                el.textContent = `${data.mem_used_gb}G / ${data.mem_total_gb}G`;
+                const bar = el.nextElementSibling?.firstElementChild;
+                if (bar) bar.style.width = `${data.mem_percent}%`;
+            }
+        });
+
+        // Update active tools count
+        const toolBadge = document.querySelector('.tool-count-badge');
+        if (toolBadge) toolBadge.textContent = `${data.tool_count} Active`;
+
+    } catch (e) {
+        console.error("Telemetry fetch failed:", e);
+    }
+}
+
+// Poll telemetry every 3 seconds
+setInterval(updateTelemetry, 3000);
+updateTelemetry();
+
+// ═══════════════════════════════════════════════════════════════════
+// UNIVERSAL SEARCH MODAL (Triggered by Search inputs on all pages)
+// ═══════════════════════════════════════════════════════════════════
+function showModal(title, text) {
+    let overlay = document.getElementById('vegas-overlay-modal');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'vegas-overlay-modal';
+        overlay.className = 'overlay-container';
+        overlay.setAttribute('style', 'position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 100000; padding: 24px;');
+        document.body.appendChild(overlay);
+    }
+    overlay.innerHTML = `
+        <div class="modal-card" style="background: rgba(10,10,12,0.95); border: 1px solid rgba(0, 209, 255, 0.25); border-radius: 16px; padding: 24px; max-width: 600px; width: 100%; box-shadow: 0 0 50px rgba(0, 209, 255, 0.15); display: flex; flex-direction: column; gap: 16px; font-family: monospace;">
+            <div class="modal-header-row" style="display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px;">
+                <div class="modal-icon-shield" style="font-size: 24px; color: #00d1ff;">
+                    <span class="material-symbols-outlined animate-spin">sync</span>
+                </div>
+                <div class="modal-title-wrap" style="flex: 1;">
+                    <h3 class="modal-title font-headline-sm" style="color: #ffffff; margin: 0; font-size: 14px;">${title}</h3>
+                    <span style="color: rgba(255,255,255,0.4); font-size: 9px; text-transform: uppercase;">VEGAS Core Subsystem Query</span>
+                </div>
+            </div>
+            <div class="modal-body-text" style="color: rgba(255,255,255,0.85); font-size: 11px; line-height: 1.6; max-height: 350px; overflow-y: auto; white-space: pre-wrap; padding: 8px 0;">
+                ${text}
+            </div>
+            <div class="modal-btn-row" style="display: flex; justify-content: flex-end; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+                <button class="modal-btn cancel" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #ffffff; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 11px;" onclick="document.getElementById('vegas-overlay-modal').remove()">CLOSE</button>
+            </div>
+        </div>
+    `;
+}
+
+window.updateModal = function(title, text) {
+    const overlay = document.getElementById('vegas-overlay-modal');
+    if (!overlay) return;
+    const titleEl = overlay.querySelector('.modal-title');
+    const bodyEl = overlay.querySelector('.modal-body-text');
+    const iconEl = overlay.querySelector('.modal-icon-shield');
+    if (titleEl) titleEl.textContent = title;
+    if (bodyEl) bodyEl.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    if (iconEl) {
+        iconEl.innerHTML = '<span class="material-symbols-outlined text-emerald-400">done</span>';
+    }
+}
+
+// Bind universal search inputs
+document.querySelectorAll('input').forEach(input => {
+    if (input.placeholder.includes('Command AetherOS')) return;
+    
+    input.addEventListener('keydown', async (e) => {
+        if (e.key === 'Enter') {
+            const query = input.value.trim();
+            if (!query) return;
+            input.value = '';
+            
+            showModal("Querying VEGAS Core...", `Processing query: "${query}"...`);
+            try {
+                const res = await fetch(`${API_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: query })
+                });
+                const data = await res.json();
+                updateModal("Response Received", data.response || data.error);
+            } catch (err) {
+                updateModal("Connection Failed", "Could not reach VEGAS core daemon on port 8001.");
+            }
+        }
+    });
+});
+
+// Bind top header "EXECUTE" button
+const executeBtn = document.querySelector('button.primary-btn-glow:not(.p-3)');
+if (executeBtn) {
+    executeBtn.addEventListener('click', () => {
+        const activeInput = document.querySelector('input:focus') || document.querySelector('input');
+        if (activeInput) {
+            const event = new KeyboardEvent('keydown', { key: 'Enter' });
+            activeInput.dispatchEvent(event);
+        }
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CHAT FUNCTIONALITY (For Dashboard / Terminal Pages)
+// ═══════════════════════════════════════════════════════════════════
+const commandInput = document.querySelector('input[placeholder*="Command AetherOS"]');
+const sendButton = document.querySelector('.p-3.primary-btn-glow, button.p-3.primary-btn-glow');
+
+if (commandInput) {
+    const chatContainer = document.querySelector('main div.flex-1.overflow-y-auto.p-container-padding');
+    let isFirstMessage = true;
+
+    async function sendChat() {
+        const text = commandInput.value.trim();
+        if (!text) return;
+        commandInput.value = '';
+
+        if (isFirstMessage && chatContainer) {
+            chatContainer.innerHTML = '';
+            isFirstMessage = false;
+        }
+
+        // 1. Append User Message
+        if (chatContainer) {
+            const userMsg = document.createElement('div');
+            userMsg.className = 'flex justify-end';
+            userMsg.innerHTML = `
+                <div class="glass-card user-message rounded-2xl rounded-tr-sm p-4 max-w-2xl text-on-surface font-body-lg text-body-lg">
+                    ${text}
+                </div>
+            `;
+            chatContainer.appendChild(userMsg);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // 2. Append Thinking Indicator
+        const thinkingIndicator = document.createElement('div');
+        thinkingIndicator.className = 'flex justify-start thinking-indicator';
+        thinkingIndicator.innerHTML = `
+            <div class="glass-card ai-message rounded-2xl rounded-tl-sm p-4 max-w-3xl flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary animate-spin">sync</span>
+                <span class="font-label-md text-label-md text-primary uppercase tracking-widest">Executing Command...</span>
+            </div>
+        `;
+        if (chatContainer) {
+            chatContainer.appendChild(thinkingIndicator);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        try {
+            const res = await fetch(`${API_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+            const data = await res.json();
+            
+            thinkingIndicator.remove();
+
+            // 3. Append AI Response
+            if (chatContainer) {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'flex justify-start';
+                aiMsg.innerHTML = `
+                    <div class="glass-card ai-message rounded-2xl rounded-tl-sm p-glass-padding max-w-3xl">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="material-symbols-outlined text-primary" style="font-size: 18px;">memory</span>
+                            <span class="font-label-md text-label-md text-primary uppercase tracking-widest">Aether Core Response</span>
+                        </div>
+                        <p class="text-on-surface font-body-lg text-body-lg mb-4 leading-relaxed whitespace-pre-wrap">${data.response || data.error}</p>
+                    </div>
+                `;
+                chatContainer.appendChild(aiMsg);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+        } catch (e) {
+            thinkingIndicator.remove();
+            if (chatContainer) {
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'flex justify-start';
+                errorMsg.innerHTML = `
+                    <div class="glass-card ai-message rounded-2xl rounded-tl-sm p-glass-padding max-w-3xl border-error">
+                        <p class="text-error font-body-lg text-body-lg leading-relaxed">Error connecting to VEGAS Core backend.</p>
+                    </div>
+                `;
+                chatContainer.appendChild(errorMsg);
+            }
+        }
+    }
+
+    if (sendButton) sendButton.addEventListener('click', sendChat);
+    commandInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') sendChat();
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// AGENTS / NODES RENDERING (For Agents Page)
+// ═══════════════════════════════════════════════════════════════════
+const agentsGrid = document.querySelector('.grid.grid-cols-1.lg\\:grid-cols-2.xl\\:grid-cols-3');
+if (agentsGrid && window.location.pathname.includes('agents.html')) {
+    async function loadAgents() {
+        try {
+            const res = await fetch(`${API_URL}/api/tools`);
+            const data = await res.json();
+            if (!data.tools) return;
+            agentsGrid.innerHTML = '';
+            data.tools.forEach((tool, idx) => {
+                const card = document.createElement('div');
+                card.className = 'glass-panel rounded-xl p-glass-padding spatial-card relative overflow-hidden group cursor-pointer border border-white/5';
+                card.innerHTML = `
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-transparent opacity-50"></div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded bg-primary/20 flex items-center justify-center border border-primary/30 text-lg">
+                                ${tool.icon || '🤖'}
+                            </div>
+                            <div>
+                                <h3 class="font-headline-sm text-headline-sm text-sm text-on-surface">${tool.name}</h3>
+                                <span class="font-label-md text-label-md text-on-surface-variant font-mono uppercase text-[9px]">${tool.category}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 bg-secondary-fixed/10 px-2 py-1 rounded border border-secondary-fixed/20">
+                            <div class="w-1.5 h-1.5 rounded-full bg-secondary-fixed pulse-dot"></div>
+                            <span class="font-label-md text-[10px] text-secondary-fixed uppercase tracking-wider">Online</span>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 h-10 text-xs">${tool.description}</p>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-white/10">
+                        <button class="px-3 py-1.5 rounded bg-white/5 hover:bg-primary/20 text-on-surface hover:text-primary transition-colors text-[10px] font-label-md flex items-center gap-1 border border-white/10" onclick="triggerAgentCall('${tool.name}')">
+                            <span class="material-symbols-outlined text-[14px]">bolt</span>
+                            Execute Node
+                        </button>
+                    </div>
+                `;
+                agentsGrid.appendChild(card);
+            });
+        } catch (e) {
+            console.error("Agents load failed:", e);
+        }
+    }
+    loadAgents();
+}
+
+window.triggerAgentCall = function(toolName) {
+    showModal("Executing Node Command...", `Invoking tool node: ${toolName}...`);
+    fetch(`${API_URL}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: `Use the ${toolName} tool` })
+    })
+    .then(r => r.json())
+    .then(data => {
+        updateModal("Execution Complete", data.response || data.error);
+    })
+    .catch(() => {
+        updateModal("Error", "Execution node offline.");
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MEMORY INTERACTIVE ACTIONS (For Memory Page)
+// ═══════════════════════════════════════════════════════════════════
+const memFactInput = document.getElementById('mem-fact');
+const memQueryInput = document.getElementById('mem-query');
+const memoryResultDiv = document.querySelector('.display-body');
+
+// Bind actions on memory page
+document.addEventListener('click', async (e) => {
+    if (e.target && e.target.classList.contains('memory-save-trigger')) {
+        const fact = memFactInput?.value.trim();
+        if (!fact) return;
+        memFactInput.value = '';
+        if (memoryResultDiv) memoryResultDiv.textContent = 'Committing memory...';
+        
+        try {
+            const res = await fetch(`${API_URL}/api/memory/remember`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fact: fact })
+            });
+            const data = await res.json();
+            if (memoryResultDiv) memoryResultDiv.textContent = data.result;
+            loadTimeline();
+        } catch (err) {
+            if (memoryResultDiv) memoryResultDiv.textContent = 'Error saving memory.';
+        }
+    }
+
+    if (e.target && e.target.textContent === 'Query Memory') {
+        const query = memQueryInput?.value.trim();
+        if (!query) return;
+        if (memoryResultDiv) memoryResultDiv.textContent = 'Recalling memory...';
+        
+        try {
+            const res = await fetch(`${API_URL}/api/memory/recall`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: query })
+            });
+            const data = await res.json();
+            if (memoryResultDiv) memoryResultDiv.textContent = data.result;
+        } catch (err) {
+            if (memoryResultDiv) memoryResultDiv.textContent = 'Error recalling memory.';
+        }
+    }
+});
+
+// Load recent memory index cards at the bottom
+async function loadTimeline() {
+    const timelineContainer = document.querySelector('.timeline-scroll');
+    if (!timelineContainer) return;
+    try {
+        const res = await fetch(`${API_URL}/api/memory/recall`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: '' })
+        });
+        const data = await res.json();
+        const lines = data.result ? data.result.split('\n') : [];
+        
+        if (lines.length > 0 && !lines[0].startsWith('No matches')) {
+            timelineContainer.innerHTML = '';
+            lines.forEach((line, idx) => {
+                const parts = line.match(/^\[(.*?)\] (.*)$/);
+                const kind = parts ? parts[1] : 'Memory';
+                const text = parts ? parts[2] : line;
+                
+                const card = document.createElement('div');
+                card.className = 'min-w-[240px] h-full bg-black/40 rounded-lg border border-white/5 p-3 flex flex-col justify-between hover:border-primary/50 transition-colors cursor-pointer';
+                card.innerHTML = `
+                    <div class="font-label-md text-label-md text-primary text-[10px] uppercase">${kind}</div>
+                    <div class="font-body-md text-body-md text-sm text-on-surface truncate">${text}</div>
+                `;
+                card.addEventListener('click', () => {
+                    const entityDiv = document.querySelector('.space-y-4 > div:nth-child(1) > .font-body-md');
+                    const previewDiv = document.querySelector('.space-y-4 > div:nth-child(3) > .font-body-md');
+                    if (entityDiv) entityDiv.textContent = kind;
+                    if (previewDiv) previewDiv.textContent = text;
+                });
+                timelineContainer.appendChild(card);
+            });
+        }
+    } catch (e) {
+        console.error("Timeline load failed:", e);
+    }
+}
+if (document.querySelector('.timeline-scroll')) {
+    loadTimeline();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// AUTOMATION REVIEW / PENDING TASKS (For Automation Page)
+// ═══════════════════════════════════════════════════════════════════
+const macroFlowSection = document.querySelector('section.glass-panel.rounded-xl.p-glass-padding.glass-panel-hover');
+if (macroFlowSection && window.location.pathname.includes('automation.html')) {
+    macroFlowSection.innerHTML = `
+        <h2 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-xl">shield</span>
+            Safety Review Gate
+        </h2>
+        <div class="space-y-3 flex-1 overflow-y-auto pr-1" id="pending-actions-list">
+            <span class="text-on-surface-variant text-xs">Loading safety check pool...</span>
+        </div>
+    `;
+    
+    async function loadPendingActions() {
+        const listDiv = document.getElementById('pending-actions-list');
+        try {
+            const res = await fetch(`${API_URL}/api/memory/pending`);
+            const data = await res.json();
+            if (!data.result || data.result === 'No pending tasks.') {
+                listDiv.innerHTML = '<span class="text-on-surface-variant text-xs">No tasks currently require safety approval.</span>';
+                return;
+            }
+            listDiv.innerHTML = '';
+            const lines = data.result.split('\n');
+            lines.forEach(line => {
+                const parts = line.match(/^(\d+)\. (.*?) \(id: (.*?)\)$/);
+                if (!parts) return;
+                const index = parts[1];
+                const desc = parts[2];
+                const taskId = parts[3];
+                
+                const item = document.createElement('div');
+                item.className = 'p-3 bg-black/40 border border-white/5 rounded-lg flex flex-col gap-2';
+                item.innerHTML = `
+                    <div class="text-[10px] text-amber-500 uppercase tracking-widest font-bold">Action ${index} Awaiting Release</div>
+                    <div class="text-xs text-on-surface font-mono">${desc}</div>
+                    <div class="flex gap-2 justify-end mt-1">
+                        <button class="px-2 py-1 rounded bg-error/15 border border-error/30 text-error text-[10px] font-bold" onclick="cancelPending('${taskId}')">DISCARD</button>
+                        <button class="px-2 py-1 rounded bg-primary/15 border border-primary/30 text-primary text-[10px] font-bold" onclick="confirmPending('${taskId}')">APPROVE</button>
+                    </div>
+                `;
+                listDiv.appendChild(item);
+            });
+        } catch (err) {
+            listDiv.innerHTML = '<span class="text-error text-xs">Could not fetch safety queue.</span>';
+        }
+    }
+    
+    window.confirmPending = async function(taskId) {
+        showModal("Executing Released Action...", `Confirming release of task ID: ${taskId}...`);
+        try {
+            const res = await fetch(`${API_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `confirm_task ${taskId}` })
+            });
+            const data = await res.json();
+            updateModal("Action Executed Successfully", data.response);
+            loadPendingActions();
+        } catch (err) {
+            updateModal("Failure", "Could not complete safety release.");
+        }
+    }
+    
+    window.cancelPending = async function(taskId) {
+        showModal("Cancelling Action...", `Cancelling task ID: ${taskId}...`);
+        try {
+            const res = await fetch(`${API_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `cancel_task ${taskId}` })
+            });
+            const data = await res.json();
+            updateModal("Action Cancelled", data.response);
+            loadPendingActions();
+        } catch (err) {
+            updateModal("Failure", "Could not cancel task.");
+        }
+    }
+    
+    loadPendingActions();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SETTINGS RENDERING (For Settings Page)
+// ═══════════════════════════════════════════════════════════════════
+const settingsForm = document.querySelector('section.glass-panel.rounded-xl.p-glass-padding.flex.flex-col');
+if (settingsForm && window.location.pathname.includes('settings.html')) {
+    async function loadSettingsMeta() {
+        try {
+            const res = await fetch(`${API_URL}/api/system-status`);
+            const data = await res.json();
+            
+            const metaDiv = document.createElement('div');
+            metaDiv.className = 'mt-6 p-4 bg-black/40 border border-white/5 rounded-lg flex flex-col gap-2 font-mono text-xs';
+            metaDiv.innerHTML = `
+                <div class="text-[10px] text-primary uppercase tracking-widest font-bold mb-2">Daemon Config Status</div>
+                <div class="flex justify-between border-b border-white/5 py-1"><span>ACTIVE MODEL</span><span class="text-on-surface">${data.model}</span></div>
+                <div class="flex justify-between border-b border-white/5 py-1"><span>DAEMON PORT</span><span class="text-on-surface">8001</span></div>
+                <div class="flex justify-between border-b border-white/5 py-1"><span>OS ARCHITECTURE</span><span class="text-on-surface">${data.os}</span></div>
+                <div class="flex justify-between border-b border-white/5 py-1"><span>PYTHON BINARY</span><span class="text-on-surface">${data.python}</span></div>
+                <div class="flex justify-between py-1"><span>CPU CORES</span><span class="text-on-surface">${data.cpu_cores} Cores</span></div>
+            `;
+            settingsForm.appendChild(metaDiv);
+        } catch (e) {
+            console.error("Settings load failed:", e);
+        }
+    }
+    loadSettingsMeta();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FILE EXPLORER RENDERING (For Files Page)
+// ═══════════════════════════════════════════════════════════════════
+const filesListContainer = document.querySelector('.files-list-container');
+const editorContentArea = document.querySelector('.editor-content-area');
+
+if (filesListContainer) {
+    async function loadFiles() {
+        filesListContainer.innerHTML = '<span class="text-on-surface-variant text-sm">Loading workspace files...</span>';
+        try {
+            const res = await fetch(`${API_URL}/api/files/list`);
+            const data = await res.json();
+            if (data.error) {
+                filesListContainer.innerHTML = `<span class="text-error">${data.error}</span>`;
+                return;
+            }
+            filesListContainer.innerHTML = '';
+            data.files.forEach(file => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between p-2 rounded bg-white/5 border border-white/5 hover:bg-white/10 transition-colors cursor-pointer';
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary">${file.is_dir ? 'folder' : 'description'}</span>
+                        <span class="font-body-md text-body-md text-on-surface">${file.name}</span>
+                    </div>
+                `;
+                item.addEventListener('click', async () => {
+                    if (file.is_dir) {
+                        return;
+                    }
+                    if (editorContentArea) editorContentArea.textContent = 'Loading file contents...';
+                    try {
+                        const fileRes = await fetch(`${API_URL}/api/files/view?path=${encodeURIComponent(file.path)}`);
+                        const fileData = await fileRes.json();
+                        if (editorContentArea) editorContentArea.textContent = fileData.content || fileData.error || 'Empty file.';
+                    } catch {
+                        if (editorContentArea) editorContentArea.textContent = 'Error loading file content.';
+                    }
+                });
+                filesListContainer.appendChild(item);
+            });
+        } catch {
+            filesListContainer.innerHTML = '<span class="text-error">Error loading directory structure.</span>';
+        }
+    }
+    loadFiles();
+}
+
+</script></body></html>

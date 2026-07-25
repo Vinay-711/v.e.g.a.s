@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AetherOS Computer Vision Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline": "#859399",
+                      "on-surface": "#e5e2e1",
+                      "on-secondary-fixed": "#00201d",
+                      "tertiary-fixed": "#e9ddff",
+                      "error": "#ffb4ab",
+                      "tertiary": "#e4d6ff",
+                      "on-tertiary-fixed": "#23005b",
+                      "on-primary-container": "#00566a",
+                      "inverse-surface": "#e5e2e1",
+                      "surface-bright": "#3a3939",
+                      "surface-container-low": "#1c1b1b",
+                      "surface": "#131313",
+                      "on-error-container": "#ffdad6",
+                      "on-primary-fixed-variant": "#004e60",
+                      "on-secondary": "#003733",
+                      "secondary-fixed": "#00fdee",
+                      "on-secondary-container": "#00716a",
+                      "surface-container-high": "#2a2a2a",
+                      "secondary-fixed-dim": "#00ded1",
+                      "secondary-container": "#00fdee",
+                      "primary": "#a4e6ff",
+                      "error-container": "#93000a",
+                      "outline-variant": "#3c494e",
+                      "on-primary-fixed": "#001f28",
+                      "on-tertiary-container": "#6000dd",
+                      "on-tertiary-fixed-variant": "#5700c9",
+                      "on-surface-variant": "#bbc9cf",
+                      "surface-container-lowest": "#0e0e0e",
+                      "background": "#131313",
+                      "on-background": "#e5e2e1",
+                      "tertiary-fixed-dim": "#d1bcff",
+                      "surface-dim": "#131313",
+                      "on-secondary-fixed-variant": "#00504b",
+                      "surface-variant": "#353534",
+                      "primary-fixed": "#b7eaff",
+                      "primary-container": "#00d1ff",
+                      "on-tertiary": "#3c0090",
+                      "secondary": "#ffffff",
+                      "inverse-on-surface": "#313030",
+                      "surface-container-highest": "#353534",
+                      "on-primary": "#003543",
+                      "tertiary-container": "#cbb5ff",
+                      "surface-tint": "#4cd6ff",
+                      "on-error": "#690005",
+                      "primary-fixed-dim": "#4cd6ff",
+                      "inverse-primary": "#00677f",
+                      "surface-container": "#201f1f"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-padding": "32px",
+                      "stack-sm": "8px",
+                      "stack-md": "16px",
+                      "unit": "4px",
+                      "gutter": "24px",
+                      "stack-lg": "32px",
+                      "glass-padding": "20px"
+              },
+              "fontFamily": {
+                      "headline-sm": [
+                              "Geist"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Geist"
+                      ],
+                      "display-lg": [
+                              "Geist"
+                      ],
+                      "label-md": [
+                              "JetBrains Mono"
+                      ],
+                      "headline-lg-mobile": [
+                              "Geist"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "letterSpacing": "0em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "0.04em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "letterSpacing": "0em",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        @font-face {
+            font-family: 'Geist';
+            src: url('https://cdn.jsdelivr.net/fontsource/fonts/geist-sans@latest/latin-400-normal.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Geist';
+            src: url('https://cdn.jsdelivr.net/fontsource/fonts/geist-sans@latest/latin-500-normal.woff2') format('woff2');
+            font-weight: 500;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Geist';
+            src: url('https://cdn.jsdelivr.net/fontsource/fonts/geist-sans@latest/latin-600-normal.woff2') format('woff2');
+            font-weight: 600;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Geist';
+            src: url('https://cdn.jsdelivr.net/fontsource/fonts/geist-sans@latest/latin-700-normal.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        body {
+            background-color: #050505;
+            color: #e5e2e1;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-panel-interactive:hover {
+            transform: scale(1.02);
+            border-color: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .glass-modal {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 64px rgba(0, 0, 0, 0.4);
+        }
+
+        .glow-border {
+            box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
+        }
+
+        .neon-text {
+            text-shadow: 0 0 8px rgba(0, 209, 255, 0.6);
+        }
+
+        .bounding-box {
+            border: 2px solid #00d1ff;
+            box-shadow: 0 0 10px rgba(0, 209, 255, 0.5), inset 0 0 10px rgba(0, 209, 255, 0.2);
+            position: absolute;
+        }
+
+        .scanline {
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,209,255,0.1) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0.1;
+            position: absolute;
+            bottom: 100%;
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scanline {
+            0% { bottom: 100%; }
+            100% { bottom: -100px; }
+        }
+
+        .pulse-dot {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Spatial Card Tilt */
+        .spatial-card {
+            perspective: 1000px;
+        }
+        .spatial-card-inner {
+            transition: transform 0.1s ease-out;
+            transform-style: preserve-3d;
+        }
+      </style>
+</head>
+<body class="flex h-screen w-full antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar (Hidden on desktop, shown on mobile if needed, but per instructions, SideNav is primary for this view. Implementing SideNav as requested) -->
+<!-- SideNavBar -->
+<nav class="bg-surface/5 backdrop-blur-2xl h-screen w-64 left-0 sticky border-r border-white/10 shadow-[64px_0_64px_rgba(0,0,0,0.4)] flex flex-col p-stack-md gap-stack-lg z-50 flex-shrink-0 hidden md:flex">
+<!-- Header -->
+<div class="flex items-center gap-stack-sm mb-stack-lg">
+<div class="w-10 h-10 rounded-full bg-primary-container/20 border border-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">lens_blur</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm text-secondary-fixed tracking-tight">VISION_CORE</h1>
+<p class="font-label-md text-label-md text-on-surface-variant/60 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed pulse-dot inline-block"></span>
+                    Neural Engine Active
+                </p>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex flex-col gap-unit flex-grow">
+<!-- Active State: Objects -->
+<a class="flex items-center gap-stack-sm px-stack-sm py-2 rounded bg-primary-container/20 text-primary border-r-2 border-primary group" href="#">
+<span class="material-symbols-outlined">detection_and_zone</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Objects</span>
+</a>
+<!-- Inactive States -->
+<a class="flex items-center gap-stack-sm px-stack-sm py-2 rounded text-on-surface-variant/60 hover:bg-white/5 hover:text-on-surface hover:translate-x-1 duration-200 transition-all group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">face</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Faces</span>
+</a>
+<a class="flex items-center gap-stack-sm px-stack-sm py-2 rounded text-on-surface-variant/60 hover:bg-white/5 hover:text-on-surface hover:translate-x-1 duration-200 transition-all group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">air</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Text</span>
+</a>
+<a class="flex items-center gap-stack-sm px-stack-sm py-2 rounded text-on-surface-variant/60 hover:bg-white/5 hover:text-on-surface hover:translate-x-1 duration-200 transition-all group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">gesture</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Gestures</span>
+</a>
+<a class="flex items-center gap-stack-sm px-stack-sm py-2 rounded text-on-surface-variant/60 hover:bg-white/5 hover:text-on-surface hover:translate-x-1 duration-200 transition-all group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">accessibility_new</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Pose</span>
+</a>
+<a class="flex items-center gap-stack-sm px-stack-sm py-2 rounded text-on-surface-variant/60 hover:bg-white/5 hover:text-on-surface hover:translate-x-1 duration-200 transition-all group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">psychology</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Emotions</span>
+</a>
+</div>
+<!-- CTA -->
+<button class="w-full py-stack-sm rounded border border-primary/30 bg-gradient-to-r from-primary/20 to-primary/5 text-primary font-label-md text-label-md uppercase tracking-wider glow-border hover:bg-primary/20 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">rocket_launch</span>
+            DEPLOY_MODEL
+        </button>
+<!-- Footer Links -->
+<div class="flex flex-col gap-unit mt-auto pt-stack-lg border-t border-white/5">
+<a class="flex items-center gap-stack-sm px-stack-sm py-2 rounded text-on-surface-variant/60 hover:bg-white/5 hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">memory</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">System</span>
+</a>
+<a class="flex items-center gap-stack-sm px-stack-sm py-2 rounded text-on-surface-variant/60 hover:bg-white/5 hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Logs</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-screen overflow-hidden p-container-padding gap-gutter relative z-10">
+<!-- Top Row: Vision Stream & Right Sidebar -->
+<div class="flex-1 flex gap-gutter min-h-0">
+<!-- Central Vision Stream -->
+<div class="flex-1 glass-panel rounded-xl flex flex-col relative overflow-hidden spatial-card" id="vision-container">
+<div class="spatial-card-inner w-full h-full relative">
+<!-- Top HUD -->
+<div class="absolute top-0 left-0 w-full p-glass-padding flex justify-between items-start z-20 pointer-events-none">
+<div class="flex items-center gap-stack-md bg-surface/80 backdrop-blur-md border border-white/10 px-4 py-2 rounded-lg">
+<span class="material-symbols-outlined text-primary pulse-dot">fiber_manual_record</span>
+<span class="font-headline-sm text-headline-sm text-on-surface tracking-widest uppercase">VISION_STREAM // LIVE</span>
+</div>
+<div class="flex gap-stack-md">
+<div class="bg-surface/80 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded font-label-md text-label-md text-primary flex flex-col items-end">
+<span class="text-on-surface-variant/60 text-[10px]">FPS</span>
+                                60.2
+                            </div>
+<div class="bg-surface/80 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded font-label-md text-label-md text-primary flex flex-col items-end">
+<span class="text-on-surface-variant/60 text-[10px]">LATENCY</span>
+                                8ms
+                            </div>
+<div class="bg-surface/80 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded font-label-md text-label-md text-primary flex flex-col items-end">
+<span class="text-on-surface-variant/60 text-[10px]">RES</span>
+                                1920x1080
+                            </div>
+</div>
+</div>
+<!-- Video Feed Placeholder -->
+<div class="absolute inset-0 z-0 bg-surface-container-lowest">
+<!-- Simulate webcam feed with an image -->
+<div class="bg-cover bg-center w-full h-full opacity-60 mix-blend-luminosity" data-alt="A high-quality, wide-angle shot of a busy modern office interior seen through a security camera or webcam perspective. Desks, computers, and casual office workers moving around. High tech, bright but slightly desaturated look, sharp focus." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDd5HjB-9DMmlWk-QVezbPYlbjsrhZPGMpXMz2Zu4eKyY3xsWXnXyC7uyc3fv2Hhz0XtSFg-FkDTMErW4e8puhaZ32h1jghs2xWpvPTD_N-636Mkm4ZViSp9e7zHFtZGgbWkzvmRiy5VvFbDXb1InPRvxOh_cNRh3e5HmESGcmfGboWcnV3KTG-QKM-So5pGTu0Xw85588y1JlLmh89Ano0nQDTYaszlyIXG16Usj8cHUjA5Fvh28ZQkw')"></div>
+<div class="scanline"></div>
+</div>
+<!-- Overlay Elements (Bounding Boxes) -->
+<div class="absolute inset-0 z-10 pointer-events-none">
+<!-- Box 1 -->
+<div class="bounding-box left-[20%] top-[30%] w-[15%] h-[40%]">
+<div class="absolute -top-6 left-[-2px] bg-primary text-on-primary font-label-md text-label-md px-2 py-0.5 whitespace-nowrap flex items-center gap-2">
+<span class="material-symbols-outlined text-[14px]">person</span>
+                                PERSON 98.4%
+                            </div>
+<!-- Corner Accents -->
+<div class="absolute -top-1 -left-1 w-2 h-2 border-t-2 border-l-2 border-primary bg-primary shadow-[0_0_8px_#00d1ff]"></div>
+<div class="absolute -top-1 -right-1 w-2 h-2 border-t-2 border-r-2 border-primary bg-primary shadow-[0_0_8px_#00d1ff]"></div>
+<div class="absolute -bottom-1 -left-1 w-2 h-2 border-b-2 border-l-2 border-primary bg-primary shadow-[0_0_8px_#00d1ff]"></div>
+<div class="absolute -bottom-1 -right-1 w-2 h-2 border-b-2 border-r-2 border-primary bg-primary shadow-[0_0_8px_#00d1ff]"></div>
+</div>
+<!-- Box 2 -->
+<div class="bounding-box left-[55%] top-[50%] w-[12%] h-[15%] border-secondary-fixed shadow-[0_0_10px_rgba(0,253,238,0.5),inset_0_0_10px_rgba(0,253,238,0.2)]">
+<div class="absolute -top-6 left-[-2px] bg-secondary-fixed text-on-secondary-fixed font-label-md text-label-md px-2 py-0.5 whitespace-nowrap flex items-center gap-2">
+<span class="material-symbols-outlined text-[14px]">laptop_mac</span>
+                                LAPTOP 92.1%
+                            </div>
+</div>
+</div>
+<!-- Bottom HUD controls -->
+<div class="absolute bottom-0 left-0 w-full p-glass-padding z-20 flex justify-between items-end pointer-events-none">
+<div class="pointer-events-auto flex bg-surface/80 backdrop-blur-md border border-white/10 rounded-full p-1">
+<button class="px-4 py-1.5 rounded-full bg-primary/20 text-primary font-label-md text-label-md transition-colors">RAW</button>
+<button class="px-4 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-white/5 font-label-md text-label-md transition-colors">SEGMENT</button>
+<button class="px-4 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-white/5 font-label-md text-label-md transition-colors">DEPTH</button>
+</div>
+<div class="w-12 h-12 rounded-full border border-primary/50 flex items-center justify-center bg-primary/10 pointer-events-auto hover:bg-primary/20 transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-primary">fullscreen</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar -->
+<div class="w-80 flex flex-col gap-gutter shrink-0">
+<!-- Hardware Status Card -->
+<div class="glass-panel rounded-xl p-glass-padding flex flex-col gap-stack-md h-[200px]">
+<div class="flex items-center gap-2 text-on-surface-variant pb-2 border-b border-white/10">
+<span class="material-symbols-outlined text-[18px]">memory</span>
+<h2 class="font-label-md text-label-md uppercase tracking-wider">HARDWARE_STATUS</h2>
+</div>
+<div class="flex-1 flex flex-col justify-center gap-stack-sm">
+<div class="flex justify-between items-end">
+<span class="font-label-md text-label-md text-on-surface">GPU USAGE</span>
+<span class="font-headline-lg text-headline-lg text-primary neon-text">72%</span>
+</div>
+<!-- Neon Bar -->
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary shadow-[0_0_10px_#00d1ff] w-[72%] pulse-dot"></div>
+</div>
+</div>
+<div class="flex justify-between items-center pt-2 border-t border-white/10">
+<span class="font-label-md text-label-md text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">thermostat</span>
+                            TEMP
+                        </span>
+<span class="font-label-md text-label-md text-secondary-fixed">54°C</span>
+</div>
+</div>
+<!-- Entity Log Card -->
+<div class="glass-panel rounded-xl p-0 flex flex-col flex-1 overflow-hidden">
+<div class="p-glass-padding pb-stack-sm flex items-center justify-between border-b border-white/10 bg-surface/50">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">list_alt</span>
+<h2 class="font-label-md text-label-md uppercase tracking-wider">ENTITY_LOG</h2>
+</div>
+<span class="font-label-md text-label-md bg-white/10 px-2 py-0.5 rounded text-on-surface">LIVE</span>
+</div>
+<div class="flex-1 overflow-y-auto p-glass-padding flex flex-col gap-unit custom-scrollbar">
+<!-- Log Item -->
+<div class="flex items-center gap-stack-sm p-2 rounded bg-white/5 border border-white/5 hover:border-primary/30 transition-colors group">
+<div class="w-10 h-10 rounded overflow-hidden shrink-0 border border-primary/20 relative">
+<img class="w-full h-full object-cover" data-alt="A tiny cropped thumbnail showing a person's face or upper body from an office webcam feed, high contrast, cyberpunk lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzObpm8y6HqSVMI7wNxBtPRxZdJel31Sp5JYZQyVpEpaHCz0rkkZhynciEF5b1uxQIUiMjGJZTbdf4Fja9tKS08nNB1hMOul5WFC5u5l-DgMVg9P995DN-9Mycv3KaBRqOyw2rG-aAvoMH8NL5p3KB06CEkSr89O_fggQU2xGJtGcieuHeGFr8zJts_fi18EMf59jUJ7cHztsewWAdxCuwAiVNoJkEEbFJ7vRqExPPvcFbTeBE1uTJCg"/>
+<div class="absolute inset-0 border border-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-md text-label-md text-primary truncate">PERSON</span>
+<span class="font-label-md text-[10px] text-on-surface-variant/60">0.2s ago</span>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full">
+<div class="bg-primary h-full rounded-full w-[98%]"></div>
+</div>
+</div>
+</div>
+<!-- Log Item -->
+<div class="flex items-center gap-stack-sm p-2 rounded bg-white/5 border border-white/5 hover:border-secondary-fixed/30 transition-colors group">
+<div class="w-10 h-10 rounded overflow-hidden shrink-0 border border-secondary-fixed/20 relative">
+<img class="w-full h-full object-cover" data-alt="A tiny cropped thumbnail showing a silver laptop on a desk from an office webcam feed." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzsuCuUI4fXE-krL7SX232y2BZsxt8bNflAsrjrnIyqOZUO63WCLFpaeNMN-eOHtLAnzeO5QN4_jhXQZf2K_yhOkRND88Mv1tELVc2VW8K1Kp8oobBNn-AMfY7t2VZUUiv8u0JEPCHRkkTBAGY6Uaoo6BLPFcyoF5_mB-7gnrSsVPHWa1rs0wxAM-YdQKTLU1qwzX5CnzcuDAGdbsCwINERiNgGruzv36ZF5HcmUDs0UzSlLpT1LobUQ"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-md text-label-md text-secondary-fixed truncate">LAPTOP</span>
+<span class="font-label-md text-[10px] text-on-surface-variant/60">1.4s ago</span>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full">
+<div class="bg-secondary-fixed h-full rounded-full w-[92%]"></div>
+</div>
+</div>
+</div>
+<!-- Log Item -->
+<div class="flex items-center gap-stack-sm p-2 rounded bg-white/5 border border-white/5 hover:border-outline/30 transition-colors group opacity-70">
+<div class="w-10 h-10 rounded overflow-hidden shrink-0 border border-outline/20 relative flex items-center justify-center bg-surface-container-low">
+<span class="material-symbols-outlined text-outline">coffee</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-md text-label-md text-outline truncate">CUP</span>
+<span class="font-label-md text-[10px] text-on-surface-variant/60">4.1s ago</span>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full">
+<div class="bg-outline h-full rounded-full w-[45%]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Area: Detection Timeline -->
+<div class="h-32 glass-panel rounded-xl p-glass-padding flex flex-col shrink-0">
+<div class="flex justify-between items-center mb-stack-sm">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">timeline</span>
+<h2 class="font-label-md text-label-md uppercase tracking-wider">DETECTION_TIMELINE (10M)</h2>
+</div>
+<span class="font-label-md text-label-md text-primary">AVG: 42 objs/sec</span>
+</div>
+<div class="flex-1 flex items-end gap-[2px] relative group">
+<!-- Timeline Grid Lines -->
+<div class="absolute inset-0 border-b border-white/10 pointer-events-none"></div>
+<div class="absolute top-1/2 w-full border-b border-white/5 border-dashed pointer-events-none"></div>
+<!-- Mock Data Bars (Generated with inline styles for heights) -->
+<!-- A simple script could populate this, but doing statically for UI layout -->
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[20%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[25%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/40 hover:bg-primary transition-colors h-[40%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/30 hover:bg-primary transition-colors h-[35%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/60 hover:bg-primary transition-colors h-[70%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/80 hover:bg-primary transition-colors h-[90%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary hover:bg-primary transition-colors h-[100%] rounded-t-sm shadow-[0_0_8px_#00d1ff]"></div>
+<div class="flex-1 bg-primary/70 hover:bg-primary transition-colors h-[85%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/50 hover:bg-primary transition-colors h-[50%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/30 hover:bg-primary transition-colors h-[30%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[20%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/40 hover:bg-primary transition-colors h-[45%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/60 hover:bg-primary transition-colors h-[65%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/50 hover:bg-primary transition-colors h-[55%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/30 hover:bg-primary transition-colors h-[35%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[15%] rounded-t-sm"></div>
+<!-- Active Scrubber Line -->
+<div class="absolute top-0 bottom-0 w-px bg-secondary-fixed left-[80%] shadow-[0_0_10px_#00fdee]"></div>
+</div>
+<div class="flex justify-between mt-1 font-label-md text-[10px] text-on-surface-variant/50">
+<span>-10:00</span>
+<span>NOW</span>
+</div>
+</div>
+</main>
+<style>
+        /* Custom Scrollbar for Entity Log */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 209, 255, 0.5);
+        }
+    </style>
+<script>
+        // Micro-interaction: Spatial Card Tilt Effect
+        const card = document.getElementById('vision-container');
+        const inner = card.querySelector('.spatial-card-inner');
+
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = ((y - centerY) / centerY) * -2; // Max 2 deg
+            const rotateY = ((x - centerX) / centerX) * 2;
+            
+            inner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+            inner.style.transform = `rotateX(0deg) rotateY(0deg)`;
+        });
+    </script>
+<script>
+// Global VEGAS OS Integration Script
+const API_URL = 'http://127.0.0.1:8001';
+
+let daemonStatusSocket = null;
+let daemonStatusReconnectTimer = null;
+let daemonStatusReconnectAttempts = 0;
+let daemonStatusDisposed = false;
+
+function renderDaemonStatus(daemon, planner) {
+    if (!daemon) return;
+
+    let badge = document.getElementById('vegas-daemon-status');
+    if (!badge) {
+        badge = document.createElement('div');
+        badge.id = 'vegas-daemon-status';
+        badge.setAttribute('aria-live', 'polite');
+        badge.style.cssText = [
+            'position:fixed', 'right:16px', 'bottom:16px', 'z-index:100001',
+            'display:flex', 'align-items:center', 'gap:8px', 'padding:8px 12px',
+            'border-radius:999px', 'font:600 10px/1.2 ui-monospace,SFMono-Regular,monospace',
+            'letter-spacing:.08em', 'background:rgba(7,12,18,.88)',
+            'border:1px solid rgba(255,255,255,.14)', 'color:#dcecff',
+            'backdrop-filter:blur(12px)'
+        ].join(';');
+        document.body.appendChild(badge);
+    }
+
+    const state = String(daemon.state || 'offline').toUpperCase();
+    const wakeWord = String((daemon.wake_word || {}).state || 'unknown').toUpperCase();
+    const voice = String((daemon.voice || {}).state || 'unknown').toUpperCase();
+    const plannerState = String(((planner || {}).active || {}).status || 'idle').toUpperCase();
+    const healthy = state === 'RUNNING' && !daemon.stale;
+    badge.textContent = `● VEGAS DAEMON ${state} · WAKE ${wakeWord} · VOICE ${voice} · PLAN ${plannerState}`;
+    badge.style.borderColor = healthy ? 'rgba(16,185,129,.55)' : 'rgba(245,158,11,.55)';
+    badge.style.color = healthy ? '#b7f7d7' : '#fde6b0';
+}
+
+function connectDaemonStatusSocket() {
+    if (daemonStatusDisposed || !window.WebSocket) return;
+    const wsUrl = `${API_URL.replace(/^http/, 'ws')}/api/daemon/status/ws`;
+    daemonStatusSocket = new WebSocket(wsUrl);
+
+    daemonStatusSocket.onmessage = event => {
+        try {
+            const message = JSON.parse(event.data);
+            if (message.type === 'daemon_status') {
+                renderDaemonStatus(message.payload);
+                daemonStatusReconnectAttempts = 0;
+            }
+        } catch (_) {
+            // The regular REST telemetry poll remains a safe fallback.
+        }
+    };
+
+    daemonStatusSocket.onerror = () => daemonStatusSocket.close();
+    daemonStatusSocket.onclose = () => {
+        if (daemonStatusDisposed) return;
+        const delay = Math.min(30000, 1000 * (2 ** daemonStatusReconnectAttempts));
+        daemonStatusReconnectAttempts += 1;
+        daemonStatusReconnectTimer = window.setTimeout(connectDaemonStatusSocket, delay);
+    };
+}
+
+window.addEventListener('beforeunload', () => {
+    daemonStatusDisposed = true;
+    if (daemonStatusReconnectTimer) window.clearTimeout(daemonStatusReconnectTimer);
+    if (daemonStatusSocket) daemonStatusSocket.close();
+});
+
+connectDaemonStatusSocket();
+
+// Update Telemetry/Status info across all pages
+async function updateTelemetry() {
+    try {
+        const res = await fetch(`${API_URL}/api/system-status`);
+        const data = await res.json();
+        renderDaemonStatus(data.daemon, data.planner);
+        
+        // Update CPU percent
+        const cpuElements = document.querySelectorAll('.font-headline-sm.text-secondary-fixed');
+        cpuElements.forEach(el => {
+            if (el.textContent.includes('%') || el.previousElementSibling?.textContent === 'CPU') {
+                el.textContent = `${data.cpu_percent}%`;
+                const bar = el.nextElementSibling?.firstElementChild;
+                if (bar) bar.style.width = `${data.cpu_percent}%`;
+            }
+        });
+        
+        // Update Memory info
+        const memElements = document.querySelectorAll('.font-headline-sm.text-primary');
+        memElements.forEach(el => {
+            if (el.textContent.includes('GB') || el.previousElementSibling?.textContent === 'MEM') {
+                el.textContent = `${data.mem_used_gb}G / ${data.mem_total_gb}G`;
+                const bar = el.nextElementSibling?.firstElementChild;
+                if (bar) bar.style.width = `${data.mem_percent}%`;
+            }
+        });
+
+        // Update active tools count
+        const toolBadge = document.querySelector('.tool-count-badge');
+        if (toolBadge) toolBadge.textContent = `${data.tool_count} Active`;
+
+    } catch (e) {
+        console.error("Telemetry fetch failed:", e);
+    }
+}
+
+// Poll telemetry every 3 seconds
+setInterval(updateTelemetry, 3000);
+updateTelemetry();
+
+// ═══════════════════════════════════════════════════════════════════
+// UNIVERSAL SEARCH MODAL (Triggered by Search inputs on all pages)
+// ═══════════════════════════════════════════════════════════════════
+function showModal(title, text) {
+    let overlay = document.getElementById('vegas-overlay-modal');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'vegas-overlay-modal';
+        overlay.className = 'overlay-container';
+        overlay.setAttribute('style', 'position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 100000; padding: 24px;');
+        document.body.appendChild(overlay);
+    }
+    overlay.innerHTML = `
+        <div class="modal-card" style="background: rgba(10,10,12,0.95); border: 1px solid rgba(0, 209, 255, 0.25); border-radius: 16px; padding: 24px; max-width: 600px; width: 100%; box-shadow: 0 0 50px rgba(0, 209, 255, 0.15); display: flex; flex-direction: column; gap: 16px; font-family: monospace;">
+            <div class="modal-header-row" style="display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px;">
+                <div class="modal-icon-shield" style="font-size: 24px; color: #00d1ff;">
+                    <span class="material-symbols-outlined animate-spin">sync</span>
+                </div>
+                <div class="modal-title-wrap" style="flex: 1;">
+                    <h3 class="modal-title font-headline-sm" style="color: #ffffff; margin: 0; font-size: 14px;">${title}</h3>
+                    <span style="color: rgba(255,255,255,0.4); font-size: 9px; text-transform: uppercase;">VEGAS Core Subsystem Query</span>
+                </div>
+            </div>
+            <div class="modal-body-text" style="color: rgba(255,255,255,0.85); font-size: 11px; line-height: 1.6; max-height: 350px; overflow-y: auto; white-space: pre-wrap; padding: 8px 0;">
+                ${text}
+            </div>
+            <div class="modal-btn-row" style="display: flex; justify-content: flex-end; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+                <button class="modal-btn cancel" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #ffffff; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 11px;" onclick="document.getElementById('vegas-overlay-modal').remove()">CLOSE</button>
+            </div>
+        </div>
+    `;
+}
+
+window.updateModal = function(title, text) {
+    const overlay = document.getElementById('vegas-overlay-modal');
+    if (!overlay) return;
+    const titleEl = overlay.querySelector('.modal-title');
+    const bodyEl = overlay.querySelector('.modal-body-text');
+    const iconEl = overlay.querySelector('.modal-icon-shield');
+    if (titleEl) titleEl.textContent = title;
+    if (bodyEl) bodyEl.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    if (iconEl) {
+        iconEl.innerHTML = '<span class="material-symbols-outlined text-emerald-400">done</span>';
+    }
+}
+
+// Bind universal search inputs
+document.querySelectorAll('input').forEach(input => {
+    if (input.placeholder.includes('Command AetherOS')) return;
+    
+    input.addEventListener('keydown', async (e) => {
+        if (e.key === 'Enter') {
+            const query = input.value.trim();
+            if (!query) return;
+            input.value = '';
+            
+            showModal("Querying VEGAS Core...", `Processing query: "${query}"...`);
+            try {
+                const res = await fetch(`${API_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: query })
+                });
+                const data = await res.json();
+                updateModal("Response Received", data.response || data.error);
+            } catch (err) {
+                updateModal("Connection Failed", "Could not reach VEGAS core daemon on port 8001.");
+            }
+        }
+    });
+});
+
+// Bind top header "EXECUTE" button
+const executeBtn = document.querySelector('button.primary-btn-glow:not(.p-3)');
+if (executeBtn) {
+    executeBtn.addEventListener('click', () => {
+        const activeInput = document.querySelector('input:focus') || document.querySelector('input');
+        if (activeInput) {
+            const event = new KeyboardEvent('keydown', { key: 'Enter' });
+            activeInput.dispatchEvent(event);
+        }
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CHAT FUNCTIONALITY (For Dashboard / Terminal Pages)
+// ═══════════════════════════════════════════════════════════════════
+const commandInput = document.querySelector('input[placeholder*="Command AetherOS"]');
+const sendButton = document.querySelector('.p-3.primary-btn-glow, button.p-3.primary-btn-glow');
+
+if (commandInput) {
+    const chatContainer = document.querySelector('main div.flex-1.overflow-y-auto.p-container-padding');
+    let isFirstMessage = true;
+
+    async function sendChat() {
+        const text = commandInput.value.trim();
+        if (!text) return;
+        commandInput.value = '';
+
+        if (isFirstMessage && chatContainer) {
+            chatContainer.innerHTML = '';
+            isFirstMessage = false;
+        }
+
+        // 1. Append User Message
+        if (chatContainer) {
+            const userMsg = document.createElement('div');
+            userMsg.className = 'flex justify-end';
+            userMsg.innerHTML = `
+                <div class="glass-card user-message rounded-2xl rounded-tr-sm p-4 max-w-2xl text-on-surface font-body-lg text-body-lg">
+                    ${text}
+                </div>
+            `;
+            chatContainer.appendChild(userMsg);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // 2. Append Thinking Indicator
+        const thinkingIndicator = document.createElement('div');
+        thinkingIndicator.className = 'flex justify-start thinking-indicator';
+        thinkingIndicator.innerHTML = `
+            <div class="glass-card ai-message rounded-2xl rounded-tl-sm p-4 max-w-3xl flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary animate-spin">sync</span>
+                <span class="font-label-md text-label-md text-primary uppercase tracking-widest">Executing Command...</span>
+            </div>
+        `;
+        if (chatContainer) {
+            chatContainer.appendChild(thinkingIndicator);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        try {
+            const res = await fetch(`${API_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+            const data = await res.json();
+            
+            thinkingIndicator.remove();
+
+            // 3. Append AI Response
+            if (chatContainer) {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'flex justify-start';
+                aiMsg.innerHTML = `
+                    <div class="glass-card ai-message rounded-2xl rounded-tl-sm p-glass-padding max-w-3xl">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="material-symbols-outlined text-primary" style="font-size: 18px;">memory</span>
+                            <span class="font-label-md text-label-md text-primary uppercase tracking-widest">Aether Core Response</span>
+                        </div>
+                        <p class="text-on-surface font-body-lg text-body-lg mb-4 leading-relaxed whitespace-pre-wrap">${data.response || data.error}</p>
+                    </div>
+                `;
+                chatContainer.appendChild(aiMsg);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+        } catch (e) {
+            thinkingIndicator.remove();
+            if (chatContainer) {
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'flex justify-start';
+                errorMsg.innerHTML = `
+                    <div class="glass-card ai-message rounded-2xl rounded-tl-sm p-glass-padding max-w-3xl border-error">
+                        <p class="text-error font-body-lg text-body-lg leading-relaxed">Error connecting to VEGAS Core backend.</p>
+                    </div>
+                `;
+                chatContainer.appendChild(errorMsg);
+            }
+        }
+    }
+
+    if (sendButton) sendButton.addEventListener('click', sendChat);
+    commandInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') sendChat();
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// AGENTS / NODES RENDERING (For Agents Page)
+// ═══════════════════════════════════════════════════════════════════
+const agentsGrid = document.querySelector('.grid.grid-cols-1.lg\\:grid-cols-2.xl\\:grid-cols-3');
+if (agentsGrid && window.location.pathname.includes('agents.html')) {
+    async function loadAgents() {
+        try {
+            const res = await fetch(`${API_URL}/api/tools`);
+            const data = await res.json();
+            if (!data.tools) return;
+            agentsGrid.innerHTML = '';
+            data.tools.forEach((tool, idx) => {
+                const card = document.createElement('div');
+                card.className = 'glass-panel rounded-xl p-glass-padding spatial-card relative overflow-hidden group cursor-pointer border border-white/5';
+                card.innerHTML = `
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-transparent opacity-50"></div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded bg-primary/20 flex items-center justify-center border border-primary/30 text-lg">
+                                ${tool.icon || '🤖'}
+                            </div>
+                            <div>
+                                <h3 class="font-headline-sm text-headline-sm text-sm text-on-surface">${tool.name}</h3>
+                                <span class="font-label-md text-label-md text-on-surface-variant font-mono uppercase text-[9px]">${tool.category}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 bg-secondary-fixed/10 px-2 py-1 rounded border border-secondary-fixed/20">
+                            <div class="w-1.5 h-1.5 rounded-full bg-secondary-fixed pulse-dot"></div>
+                            <span class="font-label-md text-[10px] text-secondary-fixed uppercase tracking-wider">Online</span>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 h-10 text-xs">${tool.description}</p>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-white/10">
+                        <button class="px-3 py-1.5 rounded bg-white/5 hover:bg-primary/20 text-on-surface hover:text-primary transition-colors text-[10px] font-label-md flex items-center gap-1 border border-white/10" onclick="triggerAgentCall('${tool.name}')">
+                            <span class="material-symbols-outlined text-[14px]">bolt</span>
+                            Execute Node
+                        </button>
+                    </div>
+                `;
+                agentsGrid.appendChild(card);
+            });
+        } catch (e) {
+            console.error("Agents load failed:", e);
+        }
+    }
+    loadAgents();
+}
+
+window.triggerAgentCall = function(toolName) {
+    showModal("Executing Node Command...", `Invoking tool node: ${toolName}...`);
+    fetch(`${API_URL}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: `Use the ${toolName} tool` })
+    })
+    .then(r => r.json())
+    .then(data => {
+        updateModal("Execution Complete", data.response || data.error);
+    })
+    .catch(() => {
+        updateModal("Error", "Execution node offline.");
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MEMORY INTERACTIVE ACTIONS (For Memory Page)
+// ═══════════════════════════════════════════════════════════════════
+const memFactInput = document.getElementById('mem-fact');
+const memQueryInput = document.getElementById('mem-query');
+const memoryResultDiv = document.querySelector('.display-body');
+
+// Bind actions on memory page
+document.addEventListener('click', async (e) => {
+    if (e.target && e.target.classList.contains('memory-save-trigger')) {
+        const fact = memFactInput?.value.trim();
+        if (!fact) return;
+        memFactInput.value = '';
+        if (memoryResultDiv) memoryResultDiv.textContent = 'Committing memory...';
+        
+        try {
+            const res = await fetch(`${API_URL}/api/memory/remember`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fact: fact })
+            });
+            const data = await res.json();
+            if (memoryResultDiv) memoryResultDiv.textContent = data.result;
+            loadTimeline();
+        } catch (err) {
+            if (memoryResultDiv) memoryResultDiv.textContent = 'Error saving memory.';
+        }
+    }
+
+    if (e.target && e.target.textContent === 'Query Memory') {
+        const query = memQueryInput?.value.trim();
+        if (!query) return;
+        if (memoryResultDiv) memoryResultDiv.textContent = 'Recalling memory...';
+        
+        try {
+            const res = await fetch(`${API_URL}/api/memory/recall`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: query })
+            });
+            const data = await res.json();
+            if (memoryResultDiv) memoryResultDiv.textContent = data.result;
+        } catch (err) {
+            if (memoryResultDiv) memoryResultDiv.textContent = 'Error recalling memory.';
+        }
+    }
+});
+
+// Load recent memory index cards at the bottom
+async function loadTimeline() {
+    const timelineContainer = document.querySelector('.timeline-scroll');
+    if (!timelineContainer) return;
+    try {
+        const res = await fetch(`${API_URL}/api/memory/recall`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: '' })
+        });
+        const data = await res.json();
+        const lines = data.result ? data.result.split('\n') : [];
+        
+        if (lines.length > 0 && !lines[0].startsWith('No matches')) {
+            timelineContainer.innerHTML = '';
+            lines.forEach((line, idx) => {
+                const parts = line.match(/^\[(.*?)\] (.*)$/);
+                const kind = parts ? parts[1] : 'Memory';
+                const text = parts ? parts[2] : line;
+                
+                const card = document.createElement('div');
+                card.className = 'min-w-[240px] h-full bg-black/40 rounded-lg border border-white/5 p-3 flex flex-col justify-between hover:border-primary/50 transition-colors cursor-pointer';
+                card.innerHTML = `
+                    <div class="font-label-md text-label-md text-primary text-[10px] uppercase">${kind}</div>
+                    <div class="font-body-md text-body-md text-sm text-on-surface truncate">${text}</div>
+                `;
+                card.addEventListener('click', () => {
+                    const entityDiv = document.querySelector('.space-y-4 > div:nth-child(1) > .font-body-md');
+                    const previewDiv = document.querySelector('.space-y-4 > div:nth-child(3) > .font-body-md');
+                    if (entityDiv) entityDiv.textContent = kind;
+                    if (previewDiv) previewDiv.textContent = text;
+                });
+                timelineContainer.appendChild(card);
+            });
+        }
+    } catch (e) {
+        console.error("Timeline load failed:", e);
+    }
+}
+if (document.querySelector('.timeline-scroll')) {
+    loadTimeline();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// AUTOMATION REVIEW / PENDING TASKS (For Automation Page)
+// ═══════════════════════════════════════════════════════════════════
+const macroFlowSection = document.querySelector('section.glass-panel.rounded-xl.p-glass-padding.glass-panel-hover');
+if (macroFlowSection && window.location.pathname.includes('automation.html')) {
+    macroFlowSection.innerHTML = `
+        <h2 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-xl">shield</span>
+            Safety Review Gate
+        </h2>
+        <div class="space-y-3 flex-1 overflow-y-auto pr-1" id="pending-actions-list">
+            <span class="text-on-surface-variant text-xs">Loading safety check pool...</span>
+        </div>
+    `;
+    
+    async function loadPendingActions() {
+        const listDiv = document.getElementById('pending-actions-list');
+        try {
+            const res = await fetch(`${API_URL}/api/memory/pending`);
+            const data = await res.json();
+            if (!data.result || data.result === 'No pending tasks.') {
+                listDiv.innerHTML = '<span class="text-on-surface-variant text-xs">No tasks currently require safety approval.</span>';
+                return;
+            }
+            listDiv.innerHTML = '';
+            const lines = data.result.split('\n');
+            lines.forEach(line => {
+                const parts = line.match(/^(\d+)\. (.*?) \(id: (.*?)\)$/);
+                if (!parts) return;
+                const index = parts[1];
+                const desc = parts[2];
+                const taskId = parts[3];
+                
+                const item = document.createElement('div');
+                item.className = 'p-3 bg-black/40 border border-white/5 rounded-lg flex flex-col gap-2';
+                item.innerHTML = `
+                    <div class="text-[10px] text-amber-500 uppercase tracking-widest font-bold">Action ${index} Awaiting Release</div>
+                    <div class="text-xs text-on-surface font-mono">${desc}</div>
+                    <div class="flex gap-2 justify-end mt-1">
+                        <button class="px-2 py-1 rounded bg-error/15 border border-error/30 text-error text-[10px] font-bold" onclick="cancelPending('${taskId}')">DISCARD</button>
+                        <button class="px-2 py-1 rounded bg-primary/15 border border-primary/30 text-primary text-[10px] font-bold" onclick="confirmPending('${taskId}')">APPROVE</button>
+                    </div>
+                `;
+                listDiv.appendChild(item);
+            });
+        } catch (err) {
+            listDiv.innerHTML = '<span class="text-error text-xs">Could not fetch safety queue.</span>';
+        }
+    }
+    
+    window.confirmPending = async function(taskId) {
+        showModal("Executing Released Action...", `Confirming release of task ID: ${taskId}...`);
+        try {
+            const res = await fetch(`${API_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `confirm_task ${taskId}` })
+            });
+            const data = await res.json();
+            updateModal("Action Executed Successfully", data.response);
+            loadPendingActions();
+        } catch (err) {
+            updateModal("Failure", "Could not complete safety release.");
+        }
+    }
+    
+    window.cancelPending = async function(taskId) {
+        showModal("Cancelling Action...", `Cancelling task ID: ${taskId}...`);
+        try {
+            const res = await fetch(`${API_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `cancel_task ${taskId}` })
+            });
+            const data = await res.json();
+            updateModal("Action Cancelled", data.response);
+            loadPendingActions();
+        } catch (err) {
+            updateModal("Failure", "Could not cancel task.");
+        }
+    }
+    
+    loadPendingActions();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SETTINGS RENDERING (For Settings Page)
+// ═══════════════════════════════════════════════════════════════════
+const settingsForm = document.querySelector('section.glass-panel.rounded-xl.p-glass-padding.flex.flex-col');
+if (settingsForm && window.location.pathname.includes('settings.html')) {
+    async function loadSettingsMeta() {
+        try {
+            const res = await fetch(`${API_URL}/api/system-status`);
+            const data = await res.json();
+            
+            const metaDiv = document.createElement('div');
+            metaDiv.className = 'mt-6 p-4 bg-black/40 border border-white/5 rounded-lg flex flex-col gap-2 font-mono text-xs';
+            metaDiv.innerHTML = `
+                <div class="text-[10px] text-primary uppercase tracking-widest font-bold mb-2">Daemon Config Status</div>
+                <div class="flex justify-between border-b border-white/5 py-1"><span>ACTIVE MODEL</span><span class="text-on-surface">${data.model}</span></div>
+                <div class="flex justify-between border-b border-white/5 py-1"><span>DAEMON PORT</span><span class="text-on-surface">8001</span></div>
+                <div class="flex justify-between border-b border-white/5 py-1"><span>OS ARCHITECTURE</span><span class="text-on-surface">${data.os}</span></div>
+                <div class="flex justify-between border-b border-white/5 py-1"><span>PYTHON BINARY</span><span class="text-on-surface">${data.python}</span></div>
+                <div class="flex justify-between py-1"><span>CPU CORES</span><span class="text-on-surface">${data.cpu_cores} Cores</span></div>
+            `;
+            settingsForm.appendChild(metaDiv);
+        } catch (e) {
+            console.error("Settings load failed:", e);
+        }
+    }
+    loadSettingsMeta();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FILE EXPLORER RENDERING (For Files Page)
+// ═══════════════════════════════════════════════════════════════════
+const filesListContainer = document.querySelector('.files-list-container');
+const editorContentArea = document.querySelector('.editor-content-area');
+
+if (filesListContainer) {
+    async function loadFiles() {
+        filesListContainer.innerHTML = '<span class="text-on-surface-variant text-sm">Loading workspace files...</span>';
+        try {
+            const res = await fetch(`${API_URL}/api/files/list`);
+            const data = await res.json();
+            if (data.error) {
+                filesListContainer.innerHTML = `<span class="text-error">${data.error}</span>`;
+                return;
+            }
+            filesListContainer.innerHTML = '';
+            data.files.forEach(file => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between p-2 rounded bg-white/5 border border-white/5 hover:bg-white/10 transition-colors cursor-pointer';
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary">${file.is_dir ? 'folder' : 'description'}</span>
+                        <span class="font-body-md text-body-md text-on-surface">${file.name}</span>
+                    </div>
+                `;
+                item.addEventListener('click', async () => {
+                    if (file.is_dir) {
+                        return;
+                    }
+                    if (editorContentArea) editorContentArea.textContent = 'Loading file contents...';
+                    try {
+                        const fileRes = await fetch(`${API_URL}/api/files/view?path=${encodeURIComponent(file.path)}`);
+                        const fileData = await fileRes.json();
+                        if (editorContentArea) editorContentArea.textContent = fileData.content || fileData.error || 'Empty file.';
+                    } catch {
+                        if (editorContentArea) editorContentArea.textContent = 'Error loading file content.';
+                    }
+                });
+                filesListContainer.appendChild(item);
+            });
+        } catch {
+            filesListContainer.innerHTML = '<span class="text-error">Error loading directory structure.</span>';
+        }
+    }
+    loadFiles();
+}
+
+</script></body></html>

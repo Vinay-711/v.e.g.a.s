@@ -1,0 +1,594 @@
+/* ============================================================================
+   V.E.G.A.S. AIOS — Mission Control HUD & Desktop OS Design System
+   Inspiration: J.A.R.V.I.S., Iron Man HUD, F.R.I.D.A.Y., Apple Vision Pro,
+                Palantir Gotham, Mission Control, Formula 1 Telemetry
+   ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+:root {
+  /* HUD Design Tokens */
+  --hud-bg: #03050c;
+  --hud-bg-elevated: #080e1a;
+  --hud-glass: rgba(6, 12, 26, 0.68);
+  --hud-glass-border: rgba(0, 243, 255, 0.22);
+  --hud-glass-border-bright: rgba(0, 243, 255, 0.65);
+
+  --hud-cyan: #00f3ff;
+  --hud-cyan-dim: rgba(0, 243, 255, 0.15);
+  --hud-cyan-glow: 0 0 20px rgba(0, 243, 255, 0.4);
+
+  --hud-gold: #ffb700;
+  --hud-gold-dim: rgba(255, 183, 0, 0.15);
+  --hud-gold-glow: 0 0 20px rgba(255, 183, 0, 0.4);
+
+  --hud-violet: #a855f7;
+  --hud-violet-dim: rgba(168, 85, 247, 0.15);
+
+  --hud-orange: #ff6b00;
+  --hud-green: #00ff88;
+  --hud-red: #ff3b30;
+
+  --text-main: #f0f6fc;
+  --text-dim: #8b949e;
+  --text-muted: #484f58;
+
+  --font-display: 'Orbitron', sans-serif;
+  --font-tech: 'Rajdhani', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --ease-desktop: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--hud-bg);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  user-select: none;
+}
+
+/* --------------------------------------------------------------------------
+   Background Tech Grid & Scanline FX
+   -------------------------------------------------------------------------- */
+body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(0, 243, 255, 0.04) 0%, transparent 70%),
+    linear-gradient(to right, rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px, 40px 40px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.scanline {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.25) 51%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.35;
+}
+
+/* --------------------------------------------------------------------------
+   Mission Control Layout Shell
+   -------------------------------------------------------------------------- */
+.mission-control {
+  position: relative;
+  display: grid;
+  grid-template-rows: 60px 1fr 200px;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;
+  padding: 12px;
+  gap: 12px;
+}
+
+/* Desktop Window Header Controls */
+.window-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 12px;
+}
+
+.win-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.win-dot:hover { transform: scale(1.15); }
+.win-dot.close { background: #ff5f56; }
+.win-dot.min { background: #ffbd2e; }
+.win-dot.max { background: #27c93f; }
+
+/* Header Telemetry Bar */
+.hud-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: var(--hud-glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--hud-glass-border);
+  border-radius: 12px;
+  box-shadow: var(--hud-cyan-glow);
+}
+
+.hud-title-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hud-brand {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  color: var(--hud-cyan);
+  text-shadow: 0 0 12px rgba(0, 243, 255, 0.7);
+}
+
+.hud-badge {
+  font-family: var(--font-tech);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--hud-cyan-dim);
+  border: 1px solid var(--hud-cyan);
+  color: var(--hud-cyan);
+  text-transform: uppercase;
+}
+
+.hud-telemetry-strip {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.telemetry-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.telemetry-val {
+  color: var(--hud-cyan);
+  font-weight: 600;
+}
+
+/* Main Workspace Stage */
+.hud-stage {
+  display: grid;
+  grid-template-columns: 360px 1fr 360px;
+  gap: 12px;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Glass Panels */
+.hud-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--hud-glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--hud-glass-border);
+  border-radius: 12px;
+  padding: 16px;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 243, 255, 0.02);
+  transition: border-color 0.3s var(--ease-desktop);
+}
+
+.hud-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-top: 2px solid var(--hud-cyan);
+  border-left: 2px solid var(--hud-cyan);
+}
+
+.hud-panel::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  border-bottom: 2px solid var(--hud-cyan);
+  border-right: 2px solid var(--hud-cyan);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-tech);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hud-cyan);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--hud-glass-border);
+  margin-bottom: 12px;
+}
+
+/* Center Stage: Living AI Core Canvas */
+.ai-core-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 50%, rgba(0, 243, 255, 0.06) 0%, rgba(3, 5, 12, 0.85) 80%);
+  border: 1px solid var(--hud-glass-border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+#aiCoreCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* AI Core Status Banner Overlay */
+.core-status-overlay {
+  position: absolute;
+  top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 10;
+}
+
+.core-state-indicator {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  padding: 6px 16px;
+  border-radius: 20px;
+  background: var(--hud-cyan-dim);
+  border: 1px solid var(--hud-cyan);
+  color: var(--hud-cyan);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+  text-transform: uppercase;
+  transition: all 0.4s var(--ease-desktop);
+}
+
+.core-state-indicator.listening {
+  background: var(--hud-gold-dim);
+  border-color: var(--hud-gold);
+  color: var(--hud-gold);
+  box-shadow: 0 0 20px rgba(255, 183, 0, 0.5);
+}
+
+.core-state-indicator.thinking {
+  background: var(--hud-violet-dim);
+  border-color: var(--hud-violet);
+  color: var(--hud-violet);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+}
+
+.core-state-indicator.alert {
+  background: rgba(255, 107, 0, 0.2);
+  border-color: var(--hud-orange);
+  color: var(--hud-orange);
+  box-shadow: 0 0 20px rgba(255, 107, 0, 0.6);
+  animation: pulse-alert 1s infinite alternate;
+}
+
+/* 8 Specialist Agent Cards Grid */
+.agents-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.agent-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--hud-glass-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-desktop);
+}
+
+.agent-card:hover {
+  border-color: var(--hud-cyan);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.25);
+  background: rgba(0, 243, 255, 0.06);
+  transform: translateY(-2px);
+}
+
+.agent-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.agent-name {
+  font-family: var(--font-tech);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.agent-status-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--hud-green);
+  box-shadow: 0 0 8px var(--hud-green);
+}
+
+.agent-tools-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* Formula 1 Hardware Telemetry Gauges */
+.f1-telemetry-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.f1-gauge {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gauge-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-tech);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.gauge-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.gauge-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--hud-cyan) 0%, var(--hud-gold) 100%);
+  border-radius: 4px;
+  transition: width 0.4s var(--ease-desktop);
+}
+
+/* Bottom Command & Terminal Dock */
+.hud-dock {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 12px;
+  height: 100%;
+}
+
+.command-bar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.command-input-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: var(--hud-glass);
+  border: 1px solid var(--hud-glass-border);
+  border-radius: 10px;
+}
+
+.mic-wake-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--hud-cyan-dim);
+  border: 1px solid var(--hud-cyan);
+  color: var(--hud-cyan);
+  cursor: pointer;
+  transition: all 0.3s var(--ease-desktop);
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+}
+
+.mic-wake-btn:hover {
+  transform: scale(1.08);
+  background: var(--hud-gold-dim);
+  border-color: var(--hud-gold);
+  color: var(--hud-gold);
+  box-shadow: 0 0 20px rgba(255, 183, 0, 0.5);
+}
+
+.mic-wake-btn.active {
+  animation: pulse-listening 1s infinite alternate;
+  background: var(--hud-gold);
+  color: #000;
+}
+
+.goal-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-main);
+}
+
+.goal-input::placeholder {
+  color: var(--text-muted);
+}
+
+.execute-btn {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 10px 20px;
+  background: var(--hud-cyan);
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: var(--hud-cyan-glow);
+  transition: all 0.25s var(--ease-desktop);
+}
+
+.execute-btn:hover {
+  transform: translateY(-2px);
+  background: #50f7ff;
+  box-shadow: 0 0 25px rgba(0, 243, 255, 0.8);
+}
+
+/* Terminal Feed */
+.terminal-feed {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--hud-cyan);
+  background: rgba(2, 6, 14, 0.88);
+  border: 1px solid var(--hud-glass-border);
+  border-radius: 8px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.terminal-line {
+  margin-bottom: 4px;
+}
+
+.terminal-line.error { color: var(--hud-red); }
+.terminal-line.success { color: var(--hud-green); }
+.terminal-line.alert { color: var(--hud-orange); }
+
+/* Modal Overlays */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 5, 12, 0.88);
+  backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease-desktop);
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.confirmation-card {
+  width: 520px;
+  background: var(--hud-bg-elevated);
+  border: 1px solid var(--hud-orange);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 0 40px rgba(255, 107, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.confirmation-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--hud-orange);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.confirmation-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-confirm {
+  background: var(--hud-orange);
+  color: #000;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Animations */
+@keyframes pulse-alert {
+  0% { box-shadow: 0 0 10px rgba(255, 107, 0, 0.4); }
+  100% { box-shadow: 0 0 30px rgba(255, 107, 0, 0.8); }
+}
+
+@keyframes pulse-listening {
+  0% { box-shadow: 0 0 10px rgba(255, 183, 0, 0.4); }
+  100% { box-shadow: 0 0 30px rgba(255, 183, 0, 0.9); }
+}

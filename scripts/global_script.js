@@ -1,0 +1,607 @@
+// Global VEGAS OS Integration Script
+const API_URL = 'http://127.0.0.1:8001';
+
+let daemonStatusSocket = null;
+let daemonStatusReconnectTimer = null;
+let daemonStatusReconnectAttempts = 0;
+let daemonStatusDisposed = false;
+
+function renderDaemonStatus(daemon, planner) {
+    if (!daemon) return;
+
+    let badge = document.getElementById('vegas-daemon-status');
+    if (!badge) {
+        badge = document.createElement('div');
+        badge.id = 'vegas-daemon-status';
+        badge.setAttribute('aria-live', 'polite');
+        badge.style.cssText = [
+            'position:fixed', 'right:16px', 'bottom:16px', 'z-index:100001',
+            'display:flex', 'align-items:center', 'gap:8px', 'padding:8px 12px',
+            'border-radius:999px', 'font:600 10px/1.2 ui-monospace,SFMono-Regular,monospace',
+            'letter-spacing:.08em', 'background:rgba(7,12,18,.88)',
+            'border:1px solid rgba(255,255,255,.14)', 'color:#dcecff',
+            'backdrop-filter:blur(12px)'
+        ].join(';');
+        document.body.appendChild(badge);
+    }
+
+    const state = String(daemon.state || 'offline').toUpperCase();
+    const wakeWord = String((daemon.wake_word || {}).state || 'unknown').toUpperCase();
+    const voice = String((daemon.voice || {}).state || 'unknown').toUpperCase();
+    const plannerState = String(((planner || {}).active || {}).status || 'idle').toUpperCase();
+    const healthy = state === 'RUNNING' && !daemon.stale;
+    badge.textContent = `● VEGAS DAEMON ${state} · WAKE ${wakeWord} · VOICE ${voice} · PLAN ${plannerState}`;
+    badge.style.borderColor = healthy ? 'rgba(16,185,129,.55)' : 'rgba(245,158,11,.55)';
+    badge.style.color = healthy ? '#b7f7d7' : '#fde6b0';
+}
+
+function connectDaemonStatusSocket() {
+    if (daemonStatusDisposed || !window.WebSocket) return;
+    const wsUrl = `${API_URL.replace(/^http/, 'ws')}/api/daemon/status/ws`;
+    daemonStatusSocket = new WebSocket(wsUrl);
+
+    daemonStatusSocket.onmessage = event => {
+        try {
+            const message = JSON.parse(event.data);
+            if (message.type === 'daemon_status') {
+                renderDaemonStatus(message.payload);
+                daemonStatusReconnectAttempts = 0;
+            }
+        } catch (_) {
+            // The regular REST telemetry poll remains a safe fallback.
+        }
+    };
+
+    daemonStatusSocket.onerror = () => daemonStatusSocket.close();
+    daemonStatusSocket.onclose = () => {
+        if (daemonStatusDisposed) return;
+        const delay = Math.min(30000, 1000 * (2 ** daemonStatusReconnectAttempts));
+        daemonStatusReconnectAttempts += 1;
+        daemonStatusReconnectTimer = window.setTimeout(connectDaemonStatusSocket, delay);
+    };
+}
+
+window.addEventListener('beforeunload', () => {
+    daemonStatusDisposed = true;
+    if (daemonStatusReconnectTimer) window.clearTimeout(daemonStatusReconnectTimer);
+    if (daemonStatusSocket) daemonStatusSocket.close();
+});
+
+connectDaemonStatusSocket();
+
+// Update Telemetry/Status info across all pages
+async function updateTelemetry() {
+    try {
+        const res = await fetch(`${API_URL}/api/system-status`);
+        const data = await res.json();
+        renderDaemonStatus(data.daemon, data.planner);
+        
+        // Update CPU percent
+        const cpuElements = document.querySelectorAll('.font-headline-sm.text-secondary-fixed');
+        cpuElements.forEach(el => {
+            if (el.textContent.includes('%') || el.previousElementSibling?.textContent === 'CPU') {
+                el.textContent = `${data.cpu_percent}%`;
+                const bar = el.nextElementSibling?.firstElementChild;
+                if (bar) bar.style.width = `${data.cpu_percent}%`;
+            }
+        });
+        
+        // Update Memory info
+        const memElements = document.querySelectorAll('.font-headline-sm.text-primary');
+        memElements.forEach(el => {
+            if (el.textContent.includes('GB') || el.previousElementSibling?.textContent === 'MEM') {
+                el.textContent = `${data.mem_used_gb}G / ${data.mem_total_gb}G`;
+                const bar = el.nextElementSibling?.firstElementChild;
+                if (bar) bar.style.width = `${data.mem_percent}%`;
+            }
+        });
+
+        // Update active tools count
+        const toolBadge = document.querySelector('.tool-count-badge');
+        if (toolBadge) toolBadge.textContent = `${data.tool_count} Active`;
+
+    } catch (e) {
+        console.error("Telemetry fetch failed:", e);
+    }
+}
+
+// Poll telemetry every 3 seconds
+setInterval(updateTelemetry, 3000);
+updateTelemetry();
+
+// ═══════════════════════════════════════════════════════════════════
+// UNIVERSAL SEARCH MODAL (Triggered by Search inputs on all pages)
+// ═══════════════════════════════════════════════════════════════════
+function showModal(title, text) {
+    let overlay = document.getElementById('vegas-overlay-modal');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'vegas-overlay-modal';
+        overlay.className = 'overlay-container';
+        overlay.setAttribute('style', 'position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 100000; padding: 24px;');
+        document.body.appendChild(overlay);
+    }
+    overlay.innerHTML = `
+        <div class="modal-card" style="background: rgba(10,10,12,0.95); border: 1px solid rgba(0, 209, 255, 0.25); border-radius: 16px; padding: 24px; max-width: 600px; width: 100%; box-shadow: 0 0 50px rgba(0, 209, 255, 0.15); display: flex; flex-direction: column; gap: 16px; font-family: monospace;">
+            <div class="modal-header-row" style="display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px;">
+                <div class="modal-icon-shield" style="font-size: 24px; color: #00d1ff;">
+                    <span class="material-symbols-outlined animate-spin">sync</span>
+                </div>
+                <div class="modal-title-wrap" style="flex: 1;">
+                    <h3 class="modal-title font-headline-sm" style="color: #ffffff; margin: 0; font-size: 14px;">${title}</h3>
+                    <span style="color: rgba(255,255,255,0.4); font-size: 9px; text-transform: uppercase;">VEGAS Core Subsystem Query</span>
+                </div>
+            </div>
+            <div class="modal-body-text" style="color: rgba(255,255,255,0.85); font-size: 11px; line-height: 1.6; max-height: 350px; overflow-y: auto; white-space: pre-wrap; padding: 8px 0;">
+                ${text}
+            </div>
+            <div class="modal-btn-row" style="display: flex; justify-content: flex-end; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+                <button class="modal-btn cancel" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #ffffff; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 11px;" onclick="document.getElementById('vegas-overlay-modal').remove()">CLOSE</button>
+            </div>
+        </div>
+    `;
+}
+
+window.updateModal = function(title, text) {
+    const overlay = document.getElementById('vegas-overlay-modal');
+    if (!overlay) return;
+    const titleEl = overlay.querySelector('.modal-title');
+    const bodyEl = overlay.querySelector('.modal-body-text');
+    const iconEl = overlay.querySelector('.modal-icon-shield');
+    if (titleEl) titleEl.textContent = title;
+    if (bodyEl) bodyEl.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    if (iconEl) {
+        iconEl.innerHTML = '<span class="material-symbols-outlined text-emerald-400">done</span>';
+    }
+}
+
+// Bind universal search inputs
+document.querySelectorAll('input').forEach(input => {
+    if (input.placeholder.includes('Command AetherOS')) return;
+    
+    input.addEventListener('keydown', async (e) => {
+        if (e.key === 'Enter') {
+            const query = input.value.trim();
+            if (!query) return;
+            input.value = '';
+            
+            showModal("Querying VEGAS Core...", `Processing query: "${query}"...`);
+            try {
+                const res = await fetch(`${API_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: query })
+                });
+                const data = await res.json();
+                updateModal("Response Received", data.response || data.error);
+            } catch (err) {
+                updateModal("Connection Failed", "Could not reach VEGAS core daemon on port 8001.");
+            }
+        }
+    });
+});
+
+// Bind top header "EXECUTE" button
+const executeBtn = document.querySelector('button.primary-btn-glow:not(.p-3)');
+if (executeBtn) {
+    executeBtn.addEventListener('click', () => {
+        const activeInput = document.querySelector('input:focus') || document.querySelector('input');
+        if (activeInput) {
+            const event = new KeyboardEvent('keydown', { key: 'Enter' });
+            activeInput.dispatchEvent(event);
+        }
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CHAT FUNCTIONALITY (For Dashboard / Terminal Pages)
+// ═══════════════════════════════════════════════════════════════════
+const commandInput = document.querySelector('input[placeholder*="Command AetherOS"]');
+const sendButton = document.querySelector('.p-3.primary-btn-glow, button.p-3.primary-btn-glow');
+
+if (commandInput) {
+    const chatContainer = document.querySelector('main div.flex-1.overflow-y-auto.p-container-padding');
+    let isFirstMessage = true;
+
+    async function sendChat() {
+        const text = commandInput.value.trim();
+        if (!text) return;
+        commandInput.value = '';
+
+        if (isFirstMessage && chatContainer) {
+            chatContainer.innerHTML = '';
+            isFirstMessage = false;
+        }
+
+        // 1. Append User Message
+        if (chatContainer) {
+            const userMsg = document.createElement('div');
+            userMsg.className = 'flex justify-end';
+            userMsg.innerHTML = `
+                <div class="glass-card user-message rounded-2xl rounded-tr-sm p-4 max-w-2xl text-on-surface font-body-lg text-body-lg">
+                    ${text}
+                </div>
+            `;
+            chatContainer.appendChild(userMsg);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // 2. Append Thinking Indicator
+        const thinkingIndicator = document.createElement('div');
+        thinkingIndicator.className = 'flex justify-start thinking-indicator';
+        thinkingIndicator.innerHTML = `
+            <div class="glass-card ai-message rounded-2xl rounded-tl-sm p-4 max-w-3xl flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary animate-spin">sync</span>
+                <span class="font-label-md text-label-md text-primary uppercase tracking-widest">Executing Command...</span>
+            </div>
+        `;
+        if (chatContainer) {
+            chatContainer.appendChild(thinkingIndicator);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        try {
+            const res = await fetch(`${API_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+            const data = await res.json();
+            
+            thinkingIndicator.remove();
+
+            // 3. Append AI Response
+            if (chatContainer) {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'flex justify-start';
+                aiMsg.innerHTML = `
+                    <div class="glass-card ai-message rounded-2xl rounded-tl-sm p-glass-padding max-w-3xl">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="material-symbols-outlined text-primary" style="font-size: 18px;">memory</span>
+                            <span class="font-label-md text-label-md text-primary uppercase tracking-widest">Aether Core Response</span>
+                        </div>
+                        <p class="text-on-surface font-body-lg text-body-lg mb-4 leading-relaxed whitespace-pre-wrap">${data.response || data.error}</p>
+                    </div>
+                `;
+                chatContainer.appendChild(aiMsg);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+        } catch (e) {
+            thinkingIndicator.remove();
+            if (chatContainer) {
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'flex justify-start';
+                errorMsg.innerHTML = `
+                    <div class="glass-card ai-message rounded-2xl rounded-tl-sm p-glass-padding max-w-3xl border-error">
+                        <p class="text-error font-body-lg text-body-lg leading-relaxed">Error connecting to VEGAS Core backend.</p>
+                    </div>
+                `;
+                chatContainer.appendChild(errorMsg);
+            }
+        }
+    }
+
+    if (sendButton) sendButton.addEventListener('click', sendChat);
+    commandInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') sendChat();
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// AGENTS / NODES RENDERING (For Agents Page)
+// ═══════════════════════════════════════════════════════════════════
+const agentsGrid = document.querySelector('.grid.grid-cols-1.lg\\:grid-cols-2.xl\\:grid-cols-3');
+if (agentsGrid && window.location.pathname.includes('agents.html')) {
+    async function loadAgents() {
+        try {
+            const res = await fetch(`${API_URL}/api/tools`);
+            const data = await res.json();
+            if (!data.tools) return;
+            agentsGrid.innerHTML = '';
+            data.tools.forEach((tool, idx) => {
+                const card = document.createElement('div');
+                card.className = 'glass-panel rounded-xl p-glass-padding spatial-card relative overflow-hidden group cursor-pointer border border-white/5';
+                card.innerHTML = `
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-transparent opacity-50"></div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded bg-primary/20 flex items-center justify-center border border-primary/30 text-lg">
+                                ${tool.icon || '🤖'}
+                            </div>
+                            <div>
+                                <h3 class="font-headline-sm text-headline-sm text-sm text-on-surface">${tool.name}</h3>
+                                <span class="font-label-md text-label-md text-on-surface-variant font-mono uppercase text-[9px]">${tool.category}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 bg-secondary-fixed/10 px-2 py-1 rounded border border-secondary-fixed/20">
+                            <div class="w-1.5 h-1.5 rounded-full bg-secondary-fixed pulse-dot"></div>
+                            <span class="font-label-md text-[10px] text-secondary-fixed uppercase tracking-wider">Online</span>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 h-10 text-xs">${tool.description}</p>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-white/10">
+                        <button class="px-3 py-1.5 rounded bg-white/5 hover:bg-primary/20 text-on-surface hover:text-primary transition-colors text-[10px] font-label-md flex items-center gap-1 border border-white/10" onclick="triggerAgentCall('${tool.name}')">
+                            <span class="material-symbols-outlined text-[14px]">bolt</span>
+                            Execute Node
+                        </button>
+                    </div>
+                `;
+                agentsGrid.appendChild(card);
+            });
+        } catch (e) {
+            console.error("Agents load failed:", e);
+        }
+    }
+    loadAgents();
+}
+
+window.triggerAgentCall = function(toolName) {
+    showModal("Executing Node Command...", `Invoking tool node: ${toolName}...`);
+    fetch(`${API_URL}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: `Use the ${toolName} tool` })
+    })
+    .then(r => r.json())
+    .then(data => {
+        updateModal("Execution Complete", data.response || data.error);
+    })
+    .catch(() => {
+        updateModal("Error", "Execution node offline.");
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MEMORY INTERACTIVE ACTIONS (For Memory Page)
+// ═══════════════════════════════════════════════════════════════════
+const memFactInput = document.getElementById('mem-fact');
+const memQueryInput = document.getElementById('mem-query');
+const memoryResultDiv = document.querySelector('.display-body');
+
+// Bind actions on memory page
+document.addEventListener('click', async (e) => {
+    if (e.target && e.target.classList.contains('memory-save-trigger')) {
+        const fact = memFactInput?.value.trim();
+        if (!fact) return;
+        memFactInput.value = '';
+        if (memoryResultDiv) memoryResultDiv.textContent = 'Committing memory...';
+        
+        try {
+            const res = await fetch(`${API_URL}/api/memory/remember`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fact: fact })
+            });
+            const data = await res.json();
+            if (memoryResultDiv) memoryResultDiv.textContent = data.result;
+            loadTimeline();
+        } catch (err) {
+            if (memoryResultDiv) memoryResultDiv.textContent = 'Error saving memory.';
+        }
+    }
+
+    if (e.target && e.target.textContent === 'Query Memory') {
+        const query = memQueryInput?.value.trim();
+        if (!query) return;
+        if (memoryResultDiv) memoryResultDiv.textContent = 'Recalling memory...';
+        
+        try {
+            const res = await fetch(`${API_URL}/api/memory/recall`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: query })
+            });
+            const data = await res.json();
+            if (memoryResultDiv) memoryResultDiv.textContent = data.result;
+        } catch (err) {
+            if (memoryResultDiv) memoryResultDiv.textContent = 'Error recalling memory.';
+        }
+    }
+});
+
+// Load recent memory index cards at the bottom
+async function loadTimeline() {
+    const timelineContainer = document.querySelector('.timeline-scroll');
+    if (!timelineContainer) return;
+    try {
+        const res = await fetch(`${API_URL}/api/memory/recall`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: '' })
+        });
+        const data = await res.json();
+        const lines = data.result ? data.result.split('\n') : [];
+        
+        if (lines.length > 0 && !lines[0].startsWith('No matches')) {
+            timelineContainer.innerHTML = '';
+            lines.forEach((line, idx) => {
+                const parts = line.match(/^\[(.*?)\] (.*)$/);
+                const kind = parts ? parts[1] : 'Memory';
+                const text = parts ? parts[2] : line;
+                
+                const card = document.createElement('div');
+                card.className = 'min-w-[240px] h-full bg-black/40 rounded-lg border border-white/5 p-3 flex flex-col justify-between hover:border-primary/50 transition-colors cursor-pointer';
+                card.innerHTML = `
+                    <div class="font-label-md text-label-md text-primary text-[10px] uppercase">${kind}</div>
+                    <div class="font-body-md text-body-md text-sm text-on-surface truncate">${text}</div>
+                `;
+                card.addEventListener('click', () => {
+                    const entityDiv = document.querySelector('.space-y-4 > div:nth-child(1) > .font-body-md');
+                    const previewDiv = document.querySelector('.space-y-4 > div:nth-child(3) > .font-body-md');
+                    if (entityDiv) entityDiv.textContent = kind;
+                    if (previewDiv) previewDiv.textContent = text;
+                });
+                timelineContainer.appendChild(card);
+            });
+        }
+    } catch (e) {
+        console.error("Timeline load failed:", e);
+    }
+}
+if (document.querySelector('.timeline-scroll')) {
+    loadTimeline();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// AUTOMATION REVIEW / PENDING TASKS (For Automation Page)
+// ═══════════════════════════════════════════════════════════════════
+const macroFlowSection = document.querySelector('section.glass-panel.rounded-xl.p-glass-padding.glass-panel-hover');
+if (macroFlowSection && window.location.pathname.includes('automation.html')) {
+    macroFlowSection.innerHTML = `
+        <h2 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-xl">shield</span>
+            Safety Review Gate
+        </h2>
+        <div class="space-y-3 flex-1 overflow-y-auto pr-1" id="pending-actions-list">
+            <span class="text-on-surface-variant text-xs">Loading safety check pool...</span>
+        </div>
+    `;
+    
+    async function loadPendingActions() {
+        const listDiv = document.getElementById('pending-actions-list');
+        try {
+            const res = await fetch(`${API_URL}/api/memory/pending`);
+            const data = await res.json();
+            if (!data.result || data.result === 'No pending tasks.') {
+                listDiv.innerHTML = '<span class="text-on-surface-variant text-xs">No tasks currently require safety approval.</span>';
+                return;
+            }
+            listDiv.innerHTML = '';
+            const lines = data.result.split('\n');
+            lines.forEach(line => {
+                const parts = line.match(/^(\d+)\. (.*?) \(id: (.*?)\)$/);
+                if (!parts) return;
+                const index = parts[1];
+                const desc = parts[2];
+                const taskId = parts[3];
+                
+                const item = document.createElement('div');
+                item.className = 'p-3 bg-black/40 border border-white/5 rounded-lg flex flex-col gap-2';
+                item.innerHTML = `
+                    <div class="text-[10px] text-amber-500 uppercase tracking-widest font-bold">Action ${index} Awaiting Release</div>
+                    <div class="text-xs text-on-surface font-mono">${desc}</div>
+                    <div class="flex gap-2 justify-end mt-1">
+                        <button class="px-2 py-1 rounded bg-error/15 border border-error/30 text-error text-[10px] font-bold" onclick="cancelPending('${taskId}')">DISCARD</button>
+                        <button class="px-2 py-1 rounded bg-primary/15 border border-primary/30 text-primary text-[10px] font-bold" onclick="confirmPending('${taskId}')">APPROVE</button>
+                    </div>
+                `;
+                listDiv.appendChild(item);
+            });
+        } catch (err) {
+            listDiv.innerHTML = '<span class="text-error text-xs">Could not fetch safety queue.</span>';
+        }
+    }
+    
+    window.confirmPending = async function(taskId) {
+        showModal("Executing Released Action...", `Confirming release of task ID: ${taskId}...`);
+        try {
+            const res = await fetch(`${API_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `confirm_task ${taskId}` })
+            });
+            const data = await res.json();
+            updateModal("Action Executed Successfully", data.response);
+            loadPendingActions();
+        } catch (err) {
+            updateModal("Failure", "Could not complete safety release.");
+        }
+    }
+    
+    window.cancelPending = async function(taskId) {
+        showModal("Cancelling Action...", `Cancelling task ID: ${taskId}...`);
+        try {
+            const res = await fetch(`${API_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `cancel_task ${taskId}` })
+            });
+            const data = await res.json();
+            updateModal("Action Cancelled", data.response);
+            loadPendingActions();
+        } catch (err) {
+            updateModal("Failure", "Could not cancel task.");
+        }
+    }
+    
+    loadPendingActions();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SETTINGS RENDERING (For Settings Page)
+// ═══════════════════════════════════════════════════════════════════
+const settingsForm = document.querySelector('section.glass-panel.rounded-xl.p-glass-padding.flex.flex-col');
+if (settingsForm && window.location.pathname.includes('settings.html')) {
+    async function loadSettingsMeta() {
+        try {
+            const res = await fetch(`${API_URL}/api/system-status`);
+            const data = await res.json();
+            
+            const metaDiv = document.createElement('div');
+            metaDiv.className = 'mt-6 p-4 bg-black/40 border border-white/5 rounded-lg flex flex-col gap-2 font-mono text-xs';
+            metaDiv.innerHTML = `
+                <div class="text-[10px] text-primary uppercase tracking-widest font-bold mb-2">Daemon Config Status</div>
+                <div class="flex justify-between border-b border-white/5 py-1"><span>ACTIVE MODEL</span><span class="text-on-surface">${data.model}</span></div>
+                <div class="flex justify-between border-b border-white/5 py-1"><span>DAEMON PORT</span><span class="text-on-surface">8001</span></div>
+                <div class="flex justify-between border-b border-white/5 py-1"><span>OS ARCHITECTURE</span><span class="text-on-surface">${data.os}</span></div>
+                <div class="flex justify-between border-b border-white/5 py-1"><span>PYTHON BINARY</span><span class="text-on-surface">${data.python}</span></div>
+                <div class="flex justify-between py-1"><span>CPU CORES</span><span class="text-on-surface">${data.cpu_cores} Cores</span></div>
+            `;
+            settingsForm.appendChild(metaDiv);
+        } catch (e) {
+            console.error("Settings load failed:", e);
+        }
+    }
+    loadSettingsMeta();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FILE EXPLORER RENDERING (For Files Page)
+// ═══════════════════════════════════════════════════════════════════
+const filesListContainer = document.querySelector('.files-list-container');
+const editorContentArea = document.querySelector('.editor-content-area');
+
+if (filesListContainer) {
+    async function loadFiles() {
+        filesListContainer.innerHTML = '<span class="text-on-surface-variant text-sm">Loading workspace files...</span>';
+        try {
+            const res = await fetch(`${API_URL}/api/files/list`);
+            const data = await res.json();
+            if (data.error) {
+                filesListContainer.innerHTML = `<span class="text-error">${data.error}</span>`;
+                return;
+            }
+            filesListContainer.innerHTML = '';
+            data.files.forEach(file => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between p-2 rounded bg-white/5 border border-white/5 hover:bg-white/10 transition-colors cursor-pointer';
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary">${file.is_dir ? 'folder' : 'description'}</span>
+                        <span class="font-body-md text-body-md text-on-surface">${file.name}</span>
+                    </div>
+                `;
+                item.addEventListener('click', async () => {
+                    if (file.is_dir) {
+                        return;
+                    }
+                    if (editorContentArea) editorContentArea.textContent = 'Loading file contents...';
+                    try {
+                        const fileRes = await fetch(`${API_URL}/api/files/view?path=${encodeURIComponent(file.path)}`);
+                        const fileData = await fileRes.json();
+                        if (editorContentArea) editorContentArea.textContent = fileData.content || fileData.error || 'Empty file.';
+                    } catch {
+                        if (editorContentArea) editorContentArea.textContent = 'Error loading file content.';
+                    }
+                });
+                filesListContainer.appendChild(item);
+            });
+        } catch {
+            filesListContainer.innerHTML = '<span class="text-error">Error loading directory structure.</span>';
+        }
+    }
+    loadFiles();
+}

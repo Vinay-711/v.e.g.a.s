@@ -1,0 +1,159 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+bin/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Sphinx documentation
+doc/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+#   For a library or package, you might want to ignore these files since the user might
+#   want to use their own version. However, for an app we often commit them.
+# .python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if lock is not desired, it can be added to gitignore.
+#Pipfile.lock
+
+# poetry
+#   Using Poetry, it is generally recommended to commit poetry.lock.
+#poetry.lock
+
+# pdm
+#   Using PDM, it is generally recommended to commit pdm.lock.
+#pdm.lock
+
+# PEP 582; project packages directory (e.g. pdm)
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments & Secret Credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Databases & Local Memory Storage
+*.db
+*.sqlite
+*.sqlite3
+.vegas_memory.json
+scratch/
+test_auto.txt
+scratch_sim_test.txt
+
+# Node modules & build output
+node_modules/
+web/dist/
+web/node_modules/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# OS metadata
+.DS_Store
+Thumbs.db
