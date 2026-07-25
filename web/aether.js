@@ -215,9 +215,16 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       const execData = await execRes.json();
 
-      if (execData.confirmation_required) {
-        activePendingTaskId = execData.task_id;
-        showConfirmationModal(execData.confirmation_required);
+      if (execData.confirmation_required || execData.status === 'needs_confirmation') {
+        const confirmText = execData.confirmation_required || execData.last_result?.result || 'Safety gate confirmation required for this action.';
+        const taskIdMatch = confirmText.match(/confirm task ([a-f0-9\-]+)/);
+        if (taskIdMatch) {
+          activePendingTaskId = taskIdMatch[1];
+        } else if (execData.task_id) {
+          activePendingTaskId = execData.task_id;
+        }
+        appendLogLine(`Confirmation Required: ${confirmText}`, 'warning');
+        showConfirmationModal(confirmText);
       } else {
         const summaryText = execData.status || 'Execution complete.';
         appendLogLine(`Execution result: ${summaryText}`, 'success');

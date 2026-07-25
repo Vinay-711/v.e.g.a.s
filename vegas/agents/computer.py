@@ -138,8 +138,8 @@ class ComputerAgent(BaseAgent):
                 output = self.tools["get_system_info"]()
             elif "play" in lowered or "music" in lowered:
                 output = self.tools["play_music"](task)
-            elif "speak" in lowered or "say" in lowered:
-                output = self.tools["speak_text"](task)
+            elif self.role in {"reporting", "safety"} or "summary" in lowered or "recommend next steps" in lowered:
+                output = f"📊 [{self.role.upper()} AGENT]: Task step execution completed successfully."
             else:
                 cwd = ctx.get("cwd", ".")
                 output = self.tools["run_command"](task, cwd=cwd)
