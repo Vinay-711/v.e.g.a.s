@@ -40,8 +40,9 @@ class DelegatingAgentExecutor:
             "plan_id": plan.plan_id,
             "goal": plan.goal,
             "intent": plan.intent,
-            "step": step,
-            "plan": plan,
+            "step": step.serialize(),
+            "step_id": step.step_id,
+            "plan": plan.serialize(),
         }
 
         # Dispatch step through the multi-agent registry
