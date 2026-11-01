@@ -295,3 +295,12 @@ PYTHONPATH=. uv run --with pytest --with pytest-asyncio pytest
 ## License
 
 This project is licensed under the terms of the [MIT License](LICENSE).
+
+## Development and permission boundaries
+
+- [Web client guide](web/README.md): dashboard setup, scripts and API dependency.
+- [pyproject.toml](pyproject.toml): Python version, dependencies and executable entry points.
+- [tests](tests): planner, memory, device, workflow and voice-related test sources.
+- [vegas/security/guardrails.py](vegas/security/guardrails.py): guardrail implementation to review before enabling tools.
+
+Start in the foreground with a dedicated sandbox and synthetic data. Background daemon installation, microphone access, OAuth connections, file modifications and outbound actions are separate capabilities, not prerequisites for merely reading the source. Keep credentials and personal memory files local; test denied actions as well as successful ones before expanding access.

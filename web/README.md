@@ -1,32 +1,24 @@
-# React + TypeScript + Vite
+# V.E.G.A.S. Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A React interface for the local assistant API. Voice, device access, calendar actions and developer tools require their own configured services and permissions.
 
-Currently, two official plugins are available:
+## Develop
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Run from this directory with Node.js compatible with the dependency versions in [package.json](package.json):
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```sh
+npm ci
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Use the local address printed by Vite. Configuration and backend startup are described in the [project README](../README.md); start those services in separate terminals.
+
+## Available checks
+
+```sh
+npm run lint
+npm run build
+npm run preview
+```
+
+These are the scripts present in the manifest. A successful bundle build is not a backend integration test. Check the API-offline state, failed requests, keyboard navigation and small-screen layout when changing the client. Never place private provider keys or wallet secrets in browser-visible environment values.
