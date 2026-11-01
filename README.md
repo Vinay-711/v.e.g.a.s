@@ -304,3 +304,11 @@ This project is licensed under the terms of the [MIT License](LICENSE).
 - [vegas/security/guardrails.py](vegas/security/guardrails.py): guardrail implementation to review before enabling tools.
 
 Start in the foreground with a dedicated sandbox and synthetic data. Background daemon installation, microphone access, OAuth connections, file modifications and outbound actions are separate capabilities, not prerequisites for merely reading the source. Keep credentials and personal memory files local; test denied actions as well as successful ones before expanding access.
+
+### Scheduler input regression tests
+
+Run `python -m unittest discover -s tests -p test_scheduler_validation.py`.
+The scheduler rejects zero, negative, nonfinite, boolean, and nonnumeric intervals
+before registering a job. Optional iteration limits must be positive integers and
+callbacks must be callable. Positive fractional intervals remain supported. The suite
+does not start scheduler threads or execute callbacks.
