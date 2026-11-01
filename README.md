@@ -294,7 +294,7 @@ PYTHONPATH=. uv run --with pytest --with pytest-asyncio pytest
 
 ## License
 
-This project is licensed under the terms of the [MIT License](LICENSE).
+A standalone license file is not included in this repository. The earlier MIT reference did not provide license terms; clarify the intended license before redistribution.
 
 ## Development and permission boundaries
 
