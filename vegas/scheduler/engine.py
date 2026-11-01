@@ -3,13 +3,24 @@ Asynchronous Scheduler and Automation Engine for VEGAS AIOS.
 Allows the agent to register background loops, cron timers, and notification triggers.
 """
 
+import math
 import time
 import threading
 from typing import Dict, Any, List, Callable, Optional
 from datetime import datetime, timedelta
 
 class ScheduledJob:
-    def __init__(self, job_id: str, interval_seconds: int, func: Callable, max_iterations: Optional[int] = None):
+    def __init__(self, job_id: str, interval_seconds: float, func: Callable, max_iterations: Optional[int] = None):
+        if (isinstance(interval_seconds, bool)
+                or not isinstance(interval_seconds, (int, float))
+                or not math.isfinite(interval_seconds) or interval_seconds <= 0):
+            raise ValueError("interval_seconds must be a finite positive number")
+        if max_iterations is not None and (
+                isinstance(max_iterations, bool) or not isinstance(max_iterations, int)
+                or max_iterations <= 0):
+            raise ValueError("max_iterations must be a positive integer or None")
+        if not callable(func):
+            raise ValueError("func must be callable")
         self.job_id = job_id
         self.interval_seconds = interval_seconds
         self.func = func
@@ -40,7 +51,7 @@ class VegasScheduler:
             self._thread.join(timeout=2.0)
         print("VegasScheduler: Background automation engine stopped.", flush=True)
 
-    def register_job(self, job_id: str, interval_seconds: int, func: Callable, max_iterations: Optional[int] = None) -> str:
+    def register_job(self, job_id: str, interval_seconds: float, func: Callable, max_iterations: Optional[int] = None) -> str:
         """
         Registers a job to run periodically.
         """
